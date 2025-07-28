@@ -1,0 +1,118 @@
+/* 移动端图表样式优化 */
+.mobile-chart-container {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.mobile-chart-wrapper {
+  min-width: 100%;
+  padding: 0;
+}
+
+/* 移动端图表卡片 */
+.mobile-chart-card {
+  background: var(--color-panel-solid);
+  border-radius: 12px;
+  padding: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+/* 图表标题 */
+.mobile-chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.mobile-chart-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--gray-12, #1c2024);
+}
+
+.mobile-chart-value {
+  font-size: 0.875rem;
+  color: var(--gray-11, #60646c);
+  text-align: right;
+}
+
+/* 简化的图表样式 */
+.mobile-chart {
+  height: 120px;
+  margin: 0 -8px;
+}
+
+/* 隐藏不必要的元素 */
+.mobile-chart .recharts-cartesian-axis-tick {
+  font-size: 0.625rem;
+}
+
+.mobile-chart .recharts-cartesian-grid-horizontal line:not(:last-child) {
+  stroke-opacity: 0.2;
+}
+
+/* 触摸优化的工具提示 */
+.mobile-chart .recharts-tooltip-wrapper {
+  pointer-events: none;
+}
+
+.mobile-chart .recharts-tooltip-content.simple {
+  background: rgba(255, 255, 255, 0.98) !important;
+  border: 1px solid #e5e7eb !important;
+  border-radius: 8px !important;
+  padding: 0.5rem 0.75rem !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+  color: #374151 !important;
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+/* 分段控制器移动端优化 */
+.mobile-chart-controls {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+  padding: 0 1rem;
+}
+
+.mobile-chart-controls .rt-SegmentedControlRoot {
+  max-width: 100%;
+  font-size: 0.875rem;
+}
+
+/* 加载状态 */
+.mobile-chart-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 120px;
+  color: var(--gray-9);
+}
+
+/* 错误状态 */
+.mobile-chart-error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 120px;
+  color: var(--red-9);
+  font-size: 0.875rem;
+  text-align: center;
+  padding: 1rem;
+}
+
+/* 响应式网格 */
+@media (min-width: 640px) {
+  .mobile-chart-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+  
+  .mobile-chart {
+    height: 150px;
+  }
+}
