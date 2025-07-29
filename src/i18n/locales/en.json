@@ -218,7 +218,15 @@
     "virtualization": "Virtualization",
     "load": "Load",
     "ping": "Ping",
-    "groupNodes": "{{group}} group: total {{total}} servers, {{online}} servers online"
+    "groupNodes": "{{group}} group: total {{total}} servers, {{online}} servers online",
+    "resource_usage": "Resource Usage",
+    "system": "System",
+    "hardware": "Hardware",
+    "runtime": "Runtime",
+    "network": "Network",
+    "version": "Version",
+    "process": "Process",
+    "connections": "Connections"
   },
   "login": {
     "title": "Login",

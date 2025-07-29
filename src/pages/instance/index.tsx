@@ -10,17 +10,23 @@ import { liveDataToRecords } from "@/utils/RecordHelper";
 import LoadChart from "./LoadChart";
 import PingChart from "./PingChart";
 import { DetailsGrid } from "@/components/DetailsGrid";
+import { MobileDetailsCard } from "@/components/MobileDetailsCard";
+import { MobileLoadChart } from "@/components/MobileLoadChart";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export default function InstancePage() {
   const { t } = useTranslation();
-  const { onRefresh } = useLiveData();
+  const { onRefresh, live_data } = useLiveData();
   const { uuid } = useParams<{ uuid: string }>();
   const [recent, setRecent] = useState<Record[]>([]);
   const { nodeList } = useNodeList();
   const length = 60 * 5;
   const [chartView, setChartView] = useState<"load" | "ping">("load");
+  const isMobile = useIsMobile();
   // #region 初始数据加载
   const node = nodeList?.find((n) => n.uuid === uuid);
+  const isOnline = live_data?.data?.online?.includes(uuid || "") || false;
+  const liveNodeData = uuid ? live_data?.data?.data?.[uuid] : undefined;
 
   useEffect(() => {
     fetch(`/api/recent/${uuid}`)
@@ -56,6 +62,63 @@ export default function InstancePage() {
     return unsubscribe;
   }, [onRefresh, uuid]);
   // #region 布局
+  if (isMobile && node) {
+    return (
+      <Flex className="items-center" direction={"column"} gap="2" style={{ width: "100%" }}>
+        {/* 移动端标题栏 */}
+        <div className="w-full px-3 py-2" style={{ backgroundColor: "var(--accent-2)", borderRadius: "12px", margin: "0 12px" }}>
+          <Flex align="center" gap="2" className="mb-2">
+            <Flag flag={node?.region ?? ""} />
+            <Text size="3" weight="bold" className="truncate flex-1">
+              {node?.name ?? uuid}
+            </Text>
+          </Flex>
+          <Text size="1" color="gray" className="px-2">
+            {node?.uuid}
+          </Text>
+        </div>
+
+        {/* 移动端详情卡片 */}
+        <MobileDetailsCard 
+          node={node} 
+          liveData={liveNodeData} 
+          isOnline={isOnline}
+        />
+
+        {/* 图表切换 */}
+        <div className="w-full px-3 mb-2">
+          <SegmentedControl.Root
+            radius="full"
+            value={chartView}
+            onValueChange={(value) => setChartView(value as "load" | "ping")}
+            className="w-full"
+          >
+            <SegmentedControl.Item value="load" className="flex-1">
+              {t("nodeCard.load")}
+            </SegmentedControl.Item>
+            <SegmentedControl.Item value="ping" className="flex-1">
+              {t("nodeCard.ping")}
+            </SegmentedControl.Item>
+          </SegmentedControl.Root>
+        </div>
+
+        {/* 图表 */}
+        <div className="w-full px-3 pb-4">
+          {chartView === "load" ? (
+            <MobileLoadChart 
+              data={liveDataToRecords(uuid ?? "", recent)} 
+              liveData={liveNodeData}
+              node={node}
+            />
+          ) : (
+            <PingChart uuid={uuid ?? ""} />
+          )}
+        </div>
+      </Flex>
+    );
+  }
+
+  // 桌面端布局
   return (
     <Flex className="items-center" direction={"column"} gap="2">
       <div className="flex flex-col gap-1 md:p-4 p-3 border-0 rounded-md">

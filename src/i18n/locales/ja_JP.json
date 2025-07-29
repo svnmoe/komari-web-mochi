@@ -216,9 +216,17 @@
     "swap": "交换",
     "last_updated": "最后上报",
     "virtualization": "虚拟化",
-    "load": "负载",
-    "ping": "延迟",
-    "groupNodes": "{{group}} 分组: 共 {{total}} 个服务器，{{online}} 个服务器在线"
+    "load": "負荷",
+    "ping": "遅延",
+    "groupNodes": "{{group}} グループ: 合計 {{total}} サーバー、{{online}} サーバーオンライン",
+    "resource_usage": "リソース使用状況",
+    "system": "システム",
+    "hardware": "ハードウェア",
+    "runtime": "ランタイム",
+    "network": "ネットワーク",
+    "version": "バージョン",
+    "process": "プロセス",
+    "connections": "接続数"
   },
   "login": {
     "title": "登录",

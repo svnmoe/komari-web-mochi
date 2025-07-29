@@ -218,7 +218,15 @@
     "virtualization": "虚拟化",
     "load": "负载",
     "ping": "延迟",
-    "groupNodes": "{{group}} 分组: 共 {{total}} 个服务器，{{online}} 个服务器在线"
+    "groupNodes": "{{group}} 分组: 共 {{total}} 个服务器，{{online}} 个服务器在线",
+    "resource_usage": "资源使用情况",
+    "system": "系统",
+    "hardware": "硬件",
+    "runtime": "运行",
+    "network": "网络",
+    "version": "版本",
+    "process": "进程",
+    "connections": "连接数"
   },
   "login": {
     "title": "登录",

@@ -218,7 +218,15 @@
     "virtualization": "虛擬化",
     "load": "負載",
     "ping": "延遲",
-    "groupNodes": "{{group}} 分組: 共 {{total}} 個伺服器，{{online}} 個伺服器線上"
+    "groupNodes": "{{group}} 分組: 共 {{total}} 個伺服器，{{online}} 個伺服器線上",
+    "resource_usage": "資源使用情況",
+    "system": "系統",
+    "hardware": "硬體",
+    "runtime": "執行",
+    "network": "網路",
+    "version": "版本",
+    "process": "程序",
+    "connections": "連線數"
   },
   "login": {
     "title": "登入",
