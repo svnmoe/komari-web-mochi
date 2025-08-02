@@ -15,6 +15,8 @@ export type NodeBasicInfo = {
   cpu_cores: number;
   /** 操作系统 */
   os: string;
+  /** 内核版本 */
+  kernel_version: string;
   /** GPU型号 */
   gpu_name: string;
   /** 地区标识 */

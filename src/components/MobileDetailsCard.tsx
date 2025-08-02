@@ -183,6 +183,7 @@ export const MobileDetailsCard: React.FC<MobileDetailsCardProps> = ({
           {activeTab === "system" && (
             <Flex direction="column" gap="3">
               <InfoRowWithIcon icon={<Monitor size={12} />} label={t("nodeCard.os")} value={node.os} />
+              <InfoRowWithIcon icon={<Monitor size={12} />} label={t("nodeCard.kernelVersion")} value={node.kernel_version || "Unknown"} />
               <InfoRowWithIcon icon={<Cpu size={12} />} label={t("nodeCard.arch")} value={node.arch} />
               <InfoRowWithIcon icon={<Server size={12} />} label={t("nodeCard.virtualization")} value={node.virtualization || "Unknown"} />
               <InfoRowWithIcon icon={<Zap size={12} />} label={t("nodeCard.version")} value={node.version} />

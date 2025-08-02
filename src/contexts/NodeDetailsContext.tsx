@@ -9,6 +9,7 @@ export type NodeDetail = {
   arch: string;
   cpu_cores: number;
   os: string;
+  kernel_version: string;
   gpu_name: string;
   ipv4: string;
   ipv6: string;

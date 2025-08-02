@@ -44,6 +44,12 @@ export const DetailsGrid = ({ uuid, gap, align }: DetailsGridProps) => {
         align={align === "center"?"end":"start"}
         down={node?.os ?? "Unknown"}
       />
+      <UpDownStack
+        className="md:w-64 w-full flex-[0_0_calc(50%-0.5rem)]"
+        up={t("nodeCard.kernelVersion")}
+        align={align === "center"?"end":"start"}
+        down={node?.kernel_version ?? "Unknown"}
+      />
 
       <UpDownStack
         className="md:w-64 w-full flex-[0_0_calc(50%-0.5rem)]"

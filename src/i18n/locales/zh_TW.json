@@ -198,6 +198,7 @@
   },
   "nodeCard": {
     "os": "作業系統",
+    "kernelVersion": "核心版本",
     "arch": "架構",
     "name": "節點名稱",
     "status": "狀態",

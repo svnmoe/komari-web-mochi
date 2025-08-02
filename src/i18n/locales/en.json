@@ -199,6 +199,7 @@
   },
   "nodeCard": {
     "os": "OS",
+    "kernelVersion": "Kernel Version",
     "arch": "Architecture",
     "name": "Node Name",
     "status": "Status",
