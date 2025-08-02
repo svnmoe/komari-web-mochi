@@ -112,6 +112,11 @@ const osConfigs: OSConfig[] = [
     keywords: ['synology', 'dsm', 'synology dsm']
   },
   {
+    name: 'Proxmox VE',
+    image: '/assets/os-proxmox.ico',
+    keywords: ['proxmox', 'proxmox ve']
+  },
+  {
     name: 'macOS',
     image: '/assets/os-macos.svg',
     keywords: ['macos']
