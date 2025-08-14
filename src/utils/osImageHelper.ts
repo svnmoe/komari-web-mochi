@@ -129,12 +129,12 @@ const osConfigs: OSConfig[] = [
   {
     name: 'Alibaba',
     image: '/assets/os-alibaba.svg',
-    keywords: ['macos']
+    keywords: ['alibaba']
   },
   {
     name: 'OpenCloudOS',
     image: '/assets/os-opencloud.svg',
-    keywords: ['macos']
+    keywords: ['opencloud']
   }
 ];
 
