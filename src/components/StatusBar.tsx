@@ -85,14 +85,21 @@ const StatusBar: React.FC<StatusBarProps> = ({
   // Calculate online percentage
   const onlinePercentage = totalCount > 0 ? (onlineCount / totalCount) * 100 : 0;
 
+  // Get color based on online percentage
+  const getOnlineColor = (percentage: number) => {
+    if (percentage >= 80) return '#10b981'; // green
+    if (percentage >= 50) return '#f59e0b'; // amber
+    return '#ef4444'; // red
+  };
+
   return (
-    <Card className="status-bar-container mx-4 mb-2 relative overflow-hidden py-1.5 px-2">
+    <Card className="status-bar-container mx-4 mb-2 relative overflow-hidden py-2 px-3">
       <Flex direction="column" gap="0">
         {/* Settings button */}
         <div className="absolute top-2 right-2 z-10">
           <Popover.Root>
             <Popover.Trigger>
-              <IconButton variant="ghost" size="1" className="hover:bg-gray-3">
+              <IconButton variant="ghost" size="1" className="hover:bg-gray-3 transition-all">
                 <Settings size={14} />
               </IconButton>
             </Popover.Trigger>
@@ -106,35 +113,41 @@ const StatusBar: React.FC<StatusBarProps> = ({
         </div>
 
         {/* Status cards grid - Dynamic flex layout */}
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-3">
           {/* Current Time */}
           {statusCardsVisibility.currentTime && (
-            <div className="flex-1 min-w-[160px] sm:min-w-[180px] md:min-w-[200px]">
+            <div className="flex-1 min-w-[160px] sm:min-w-[180px] md:min-w-[200px] status-time-wrapper">
               <StatusCard
                 icon={<Activity className="text-gray-11" size={16} />}
                 title={t("current_time")}
-                value={currentTime}
+                value={<span className="tabular-nums font-semibold text-base">{currentTime}</span>}
                 className="status-time"
               />
             </div>
           )}
 
-          {/* Online Status with breathing effect */}
+          {/* Online Status */}
           {statusCardsVisibility.currentOnline && (
-            <div className="flex-1 min-w-[160px] sm:min-w-[180px] md:min-w-[200px]">
+            <div className="flex-1 min-w-[160px] sm:min-w-[180px] md:min-w-[200px] status-online-wrapper">
               <StatusCard
                 icon={<Server className="text-gray-11" size={16} />}
                 title={t("current_online")}
                 value={
-                  <Flex align="center" gap="2">
-                    <span>{onlineCount}/{totalCount}</span>
-                    <div className="flex-1 bg-gray-3 rounded-full h-1.5 min-w-[40px]">
-                      <div
-                        className="bg-green-9 h-1.5 rounded-full transition-all duration-1000 ease-out"
-                        style={{ width: `${onlinePercentage}%` }}
-                      />
-                    </div>
+                  <Flex align="center" justify="between" className="w-full">
+                    <span className="font-semibold tabular-nums text-base">{onlineCount}/{totalCount}</span>
+                    <span className="text-xs tabular-nums opacity-60">{onlinePercentage.toFixed(0)}%</span>
                   </Flex>
+                }
+                subtitle={
+                  <div className="w-full bg-gray-a4 rounded-full h-1.5 overflow-hidden">
+                    <div
+                      className="h-full rounded-full transition-all duration-500"
+                      style={{
+                        width: `${onlinePercentage}%`,
+                        backgroundColor: getOnlineColor(onlinePercentage)
+                      }}
+                    />
+                  </div>
                 }
                 className="status-online"
               />
@@ -143,11 +156,11 @@ const StatusBar: React.FC<StatusBarProps> = ({
 
           {/* Regions */}
           {statusCardsVisibility.regionOverview && (
-            <div className="flex-1 min-w-[160px] sm:min-w-[180px] md:min-w-[200px]">
+            <div className="flex-1 min-w-[160px] sm:min-w-[180px] md:min-w-[200px] status-region-wrapper">
               <StatusCard
                 icon={<Globe className="text-gray-11" size={16} />}
                 title={t("region_overview")}
-                value={regionCount}
+                value={<span className="font-semibold text-lg">{regionCount}</span>}
                 className="status-region"
               />
             </div>
@@ -155,16 +168,16 @@ const StatusBar: React.FC<StatusBarProps> = ({
 
           {/* Traffic Overview */}
           {statusCardsVisibility.trafficOverview && (
-            <div className="flex-1 min-w-[160px] sm:min-w-[180px] md:min-w-[200px]">
+            <div className="flex-1 min-w-[160px] sm:min-w-[180px] md:min-w-[200px] status-traffic-wrapper">
               <StatusCard
                 icon={<Network className="text-gray-11" size={16} />}
                 title={t("traffic_overview")}
                 value={
                   <Flex direction="column" gap="0">
-                    <Text size="2" className="font-medium leading-tight">
+                    <Text size="2" className="leading-snug font-medium">
                       ↑ {formatBytes(uploadTotal)}
                     </Text>
-                    <Text size="2" className="font-medium leading-tight">
+                    <Text size="2" className="leading-snug font-medium">
                       ↓ {formatBytes(downloadTotal)}
                     </Text>
                   </Flex>
@@ -176,24 +189,24 @@ const StatusBar: React.FC<StatusBarProps> = ({
 
           {/* Network Speed Chart */}
           {statusCardsVisibility.networkSpeed && (
-            <div className="flex-1 min-w-[200px] sm:min-w-[250px] md:min-w-[300px]">
+            <div className="flex-1 min-w-[200px] sm:min-w-[250px] md:min-w-[300px] status-speed-wrapper">
               <StatusCard
                 icon={<TrendingUp className="text-gray-11" size={16} />}
                 title={t("network_speed")}
                 value={
                   <div className="w-full h-12">
                     <ResponsiveContainer width="100%" height="100%">
-                      <LineChart data={speedHistory} margin={{ top: 2, right: 2, bottom: 2, left: 2 }}>
+                      <LineChart data={speedHistory} margin={{ top: 4, right: 4, bottom: 4, left: 4 }}>
                         <Tooltip
                           content={({ active, payload }) => {
                             if (active && payload && payload.length) {
                               return (
-                                <div className="bg-gray-1 p-1.5 rounded shadow-lg border border-gray-4">
-                                  <Text size="1" style={{ color: '#95E1D3' }}>
+                                <div className="bg-gray-2 p-1.5 rounded shadow border border-gray-5">
+                                  <Text size="1" style={{ color: '#10b981' }}>
                                     ↑ {formatSpeed(payload[0].value as number)}
                                   </Text>
                                   <br />
-                                  <Text size="1" style={{ color: '#F38181' }}>
+                                  <Text size="1" style={{ color: '#ef4444' }}>
                                     ↓ {formatSpeed(payload[1].value as number)}
                                   </Text>
                                 </div>
@@ -205,7 +218,7 @@ const StatusBar: React.FC<StatusBarProps> = ({
                         <Line
                           type="monotone"
                           dataKey="upload"
-                          stroke="#95E1D3"
+                          stroke="#10b981"
                           strokeWidth={1.5}
                           dot={false}
                           animationDuration={0}
@@ -213,7 +226,7 @@ const StatusBar: React.FC<StatusBarProps> = ({
                         <Line
                           type="monotone"
                           dataKey="download"
-                          stroke="#F38181"
+                          stroke="#ef4444"
                           strokeWidth={1.5}
                           dot={false}
                           animationDuration={0}
@@ -223,12 +236,12 @@ const StatusBar: React.FC<StatusBarProps> = ({
                   </div>
                 }
                 subtitle={
-                  <Flex gap="2">
-                    <Text size="1" className="font-medium">
-                      ↑{formatSpeed(uploadSpeed)}
+                  <Flex gap="3" justify="center" className="text-xs">
+                    <Text size="1" style={{ color: '#10b981' }}>
+                      ↑ {formatSpeed(uploadSpeed)}
                     </Text>
-                    <Text size="1" className="font-medium">
-                      ↓{formatSpeed(downloadSpeed)}
+                    <Text size="1" style={{ color: '#ef4444' }}>
+                      ↓ {formatSpeed(downloadSpeed)}
                     </Text>
                   </Flex>
                 }
@@ -252,39 +265,18 @@ interface StatusCardProps {
 }
 
 const StatusCard: React.FC<StatusCardProps> = ({ icon, title, value, subtitle, className }) => {
-  // 网络速率卡片需要特殊布局
-  const isSpeedCard = className?.includes('status-speed');
-  const minHeight = isSpeedCard ? 'min-h-[5rem]' : 'min-h-[3.5rem]';
-  
-  // 网络速率卡片使用不同的布局
-  if (isSpeedCard) {
-    return (
-      <div className={`status-card rounded-md ${minHeight} w-full ${className || ''}`}>
-        <Flex direction="column" gap="1" className="h-full justify-center">
-          <Flex align="center" gap="2">
-            <div className="status-icon flex-shrink-0">{icon}</div>
-            <Text size="1" color="gray" className="text-xs sm:text-sm">
-              {title}
-            </Text>
-          </Flex>
-          <div className="status-value w-full">{value}</div>
-          {subtitle && <div className="status-subtitle text-xs text-center">{subtitle}</div>}
-        </Flex>
-      </div>
-    );
-  }
-  
+  // 所有卡片使用统一的垂直布局
   return (
-    <div className={`status-card rounded-md ${minHeight} w-full flex items-center ${className || ''}`}>
-      <Flex align="center" gap="2" className="h-full w-full">
-        <div className="status-icon flex-shrink-0">{icon}</div>
-        <Flex direction="column" className="flex-1 min-w-0">
-          <Text size="1" color="gray" className="text-xs sm:text-sm">
+    <div className={`status-card rounded-md min-h-[5.5rem] w-full ${className || ''}`}>
+      <Flex direction="column" gap="1" className="h-full justify-center">
+        <Flex align="center" gap="2">
+          <div className="status-icon flex-shrink-0">{icon}</div>
+          <Text size="1" color="gray" className="text-xs">
             {title}
           </Text>
-          <div className="status-value font-semibold text-sm sm:text-base">{value}</div>
-          {subtitle && <div className="status-subtitle text-xs">{subtitle}</div>}
         </Flex>
+        <div className="status-value w-full">{value}</div>
+        {subtitle && <div className="status-subtitle">{subtitle}</div>}
       </Flex>
     </div>
   );

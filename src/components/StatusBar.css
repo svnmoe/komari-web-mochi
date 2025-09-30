@@ -1,8 +1,7 @@
 /* Status Bar Container */
 .status-bar-container {
-  background: var(--gray-2);
-  border: 1px solid var(--gray-3);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  background: var(--color-background);
+  border: 1px solid var(--gray-a5);
   position: relative;
   overflow: hidden;
 }
@@ -10,18 +9,16 @@
 /* Status Card Styles */
 .status-card {
   position: relative;
-  background: var(--color-background);
-  border: 1px solid var(--gray-3);
+  background: var(--gray-a2);
+  border: 1px solid var(--gray-a4);
   transition: all 0.2s ease;
-  padding: 0.375rem 0.625rem;
+  padding: 0.875rem;
   height: 100%;
 }
 
 .status-card:hover {
-  background: var(--gray-2);
-  border-color: var(--gray-4);
-  transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  background: var(--gray-a3);
+  border-color: var(--gray-a6);
 }
 
 /* Icon animations */
@@ -29,7 +26,21 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s ease;
+}
+
+.status-icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: var(--gray-a3);
+  transition: background 0.2s ease;
+}
+
+.status-card:hover .status-icon-wrapper {
+  background: var(--gray-a4);
 }
 
 /* Breathing light effect for online status */
@@ -92,43 +103,72 @@
   animation: shimmer 2s infinite;
 }
 
+
 /* Responsive adjustments */
 @media (max-width: 640px) {
+  .status-bar-container {
+    margin: 0.5rem;
+    padding: 0.5rem !important;
+  }
+
+  .status-bar-container > div > div {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+  }
+
+  /* Speed card takes full width on mobile */
+  .status-speed-wrapper {
+    grid-column: 1 / -1;
+  }
+
   .status-card {
-    padding: 0.75rem 1rem;
+    padding: 0.5rem;
+    min-height: 4rem !important;
   }
-  
+
+  .status-icon {
+    width: 14px;
+    height: 14px;
+  }
+
+  .status-icon svg {
+    width: 14px !important;
+    height: 14px !important;
+  }
+
   .status-card .status-value {
-    font-size: 1.125rem !important;
-    line-height: 1.4;
+    font-size: 0.85rem !important;
+    line-height: 1.2;
+    margin-top: 0.25rem;
   }
-  
+
   .status-card .status-subtitle {
     margin-top: 0.25rem;
+    font-size: 0.7rem;
+  }
+
+  /* Smaller text for title on mobile */
+  .status-card .rt-Text {
+    font-size: 0.65rem !important;
+  }
+
+  /* Hide progress bar on mobile for online status */
+  .status-online .status-subtitle {
+    display: none;
+  }
+
+  /* Settings button position on mobile */
+  .status-bar-container > div > div:first-child {
+    top: 0.25rem;
+    right: 0.25rem;
   }
 }
 
-/* Dark mode optimizations */
-@media (prefers-color-scheme: dark) {
-  .status-bar-container {
-    background: var(--gray-2);
-    border-color: var(--gray-4);
-  }
-  
-  .status-card {
-    background: var(--gray-1);
-    border-color: var(--gray-4);
-  }
-  
-  .status-card:hover {
-    background: var(--gray-2);
-    border-color: var(--gray-5);
-  }
-}
 
 /* Smooth number transitions */
 .status-value {
-  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  letter-spacing: 0.01em;
 }
 
 /* Loading skeleton animation */

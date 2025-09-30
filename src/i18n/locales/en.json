@@ -647,6 +647,6 @@
     "title": "PWA Status"
   },
   "statusBar": {
-    "forceShowTrafficText": "Show upload/download traffic in Modern view"
+    "forceShowTrafficText": "Show up/down traffic in Modern view"
   }
 }
