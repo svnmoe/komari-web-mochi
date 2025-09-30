@@ -142,3 +142,43 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* 全局离线节点红色明显指示 */
+.node-card-offline {
+  border: 2px solid var(--red-9) !important;
+  background: linear-gradient(135deg, var(--red-a2) 0%, var(--red-a3) 100%) !important;
+  box-shadow: 0 0 0 1px var(--red-a5), 0 2px 12px var(--red-a4) !important;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.node-card-offline::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 12px,
+    var(--red-a2) 12px,
+    var(--red-a2) 24px
+  );
+  pointer-events: none;
+  opacity: 0.35;
+  border-radius: inherit;
+  z-index: 0;
+}
+
+.node-card-offline:hover {
+  border-color: var(--red-10) !important;
+  box-shadow: 0 0 0 1px var(--red-a6), 0 4px 16px var(--red-a5) !important;
+}
+
+/* 确保内容在斜纹之上 */
+.node-card-offline > * {
+  position: relative;
+  z-index: 1;
+}

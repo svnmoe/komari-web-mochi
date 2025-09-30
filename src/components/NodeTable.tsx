@@ -287,7 +287,7 @@ const NodeTable: React.FC<NodeTableProps> = ({ nodes, liveData }) => {
             return (
               <React.Fragment key={node.uuid}>
                 <TableRow
-                  className="hover:bg-accent-2 transition-colors duration-200 table-row-hover"
+                  className={`hover:bg-accent-2 transition-colors duration-200 table-row-hover ${!isOnline ? 'node-card-offline' : ''}`}
                   onClick={() => toggleRowExpansion(node.uuid)}
                 >
                   <TableCell>

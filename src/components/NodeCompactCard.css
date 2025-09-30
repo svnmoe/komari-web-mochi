@@ -54,3 +54,63 @@
   grid-template-rows: 1fr;
   opacity: 1;
 }
+
+/* 离线节点红色明显指示 */
+.node-compact-card.offline {
+  border: 2px solid var(--red-9) !important;
+  background: linear-gradient(135deg, var(--red-a2) 0%, var(--red-a3) 100%);
+  position: relative;
+  box-shadow: 0 0 0 1px var(--red-a5), 0 2px 8px var(--red-a4);
+  transition: all 0.3s ease;
+}
+
+.node-compact-card.offline::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 10px,
+    var(--red-a2) 10px,
+    var(--red-a2) 20px
+  );
+  pointer-events: none;
+  opacity: 0.4;
+  border-radius: var(--radius-4);
+  z-index: 0;
+}
+
+.node-compact-card.offline:hover {
+  border-color: var(--red-10) !important;
+  box-shadow: 0 0 0 1px var(--red-a6), 0 4px 12px var(--red-a5);
+}
+
+/* 离线状态指示器增强 */
+.node-compact-card.offline .status-indicator.offline {
+  background-color: var(--red-9);
+  box-shadow: 0 0 8px var(--red-9);
+  animation: pulse-offline 2s ease-in-out infinite;
+}
+
+/* 内容在斜纹之上 */
+.node-compact-card.offline > * {
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes pulse-offline {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+    box-shadow: 0 0 8px var(--red-9);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.3);
+    box-shadow: 0 0 12px var(--red-9);
+  }
+}

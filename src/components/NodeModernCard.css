@@ -279,3 +279,43 @@
   content-visibility: auto;
   contain-intrinsic-size: auto 300px;
 }
+
+/* 离线节点红色明显指示 */
+.modern-card-offline {
+  border: 3px solid var(--red-9) !important;
+  background: linear-gradient(135deg, var(--red-a2) 0%, var(--red-a3) 50%, var(--red-a2) 100%) !important;
+  box-shadow: 0 0 0 1px var(--red-a5), 0 4px 16px var(--red-a4), 0 0 20px var(--red-a3) !important;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.modern-card-offline::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 15px,
+    var(--red-a3) 15px,
+    var(--red-a3) 30px
+  );
+  pointer-events: none;
+  opacity: 0.4;
+  border-radius: var(--card-radius, 0.75rem);
+  z-index: 1;
+}
+
+.modern-card-offline:hover {
+  border-color: var(--red-10) !important;
+  box-shadow: 0 0 0 1px var(--red-a6), 0 6px 20px var(--red-a5), 0 0 30px var(--red-a4) !important;
+}
+
+/* 确保内容在斜纹之上 */
+.modern-card-offline > * {
+  position: relative;
+  z-index: 2;
+}
