@@ -3,7 +3,6 @@ import { useVirtualizer } from "@tanstack/react-virtual";
 import type { NodeBasicInfo } from "@/contexts/NodeListContext";
 import type { LiveData } from "../types/LiveData";
 import { ModernCard } from "./NodeModernCard";
-import { usePublicInfo } from "@/contexts/PublicInfoContext";
 
 interface ModernGridVirtualProps {
   nodes: NodeBasicInfo[];
@@ -20,58 +19,32 @@ const ModernGridVirtual: React.FC<ModernGridVirtualProps> = ({
   const [containerWidth, setContainerWidth] = useState(0);
   const [containerHeight, setContainerHeight] = useState(600);
   const onlineNodes = liveData?.online || [];
-  const { publicInfo } = usePublicInfo();
-  const offlineNodePosition = publicInfo?.theme_settings?.offlineNodePosition ?? "后面";
-  
+
   // 计算列数 - 严格按照宽度÷430向下取整
   const columns = useMemo(() => {
     if (containerWidth === 0) return 1;
-    
+
     // 根据容器宽度计算列数：宽度÷470向下取整
     // 考虑padding和gap的影响
     const padding = 32; // 左右各16px
     const gap = 16;
     const availableWidth = containerWidth - padding;
-    
+
     // 计算可用宽度能容纳多少个430px的卡片
     // 公式：(可用宽度 + 间距) / (430 + 间距) 向下取整
     const cols = Math.max(1, Math.floor((availableWidth + gap) / (430 + gap)));
-    
+
     return cols;
   }, [containerWidth]);
-  
-  // 排序节点：根据配置决定离线节点位置
-  const sortedNodes = useMemo(() => {
-    const onlineSet = new Set(onlineNodes);
-    
-    return [...nodes].sort((a, b) => {
-      const aOnline = onlineSet.has(a.uuid);
-      const bOnline = onlineSet.has(b.uuid);
-      
-      // 根据配置决定离线节点位置
-      if (offlineNodePosition === "前面") {
-        // 离线节点在前
-        if (aOnline !== bOnline) return aOnline ? 1 : -1;
-      } else if (offlineNodePosition === "原位置") {
-        // 不区分在线状态，只按权重排序
-        // 继续执行下面的权重排序
-      } else {
-        // 默认：离线节点在后（后面）
-        if (aOnline !== bOnline) return aOnline ? -1 : 1;
-      }
-      
-      return a.weight - b.weight;
-    });
-  }, [nodes, onlineNodes, offlineNodePosition]);
-  
-  // 将节点分组为行
+
+  // 节点已在父组件排序，直接分组为行
   const rows = useMemo(() => {
     const result: NodeBasicInfo[][] = [];
-    for (let i = 0; i < sortedNodes.length; i += columns) {
-      result.push(sortedNodes.slice(i, i + columns));
+    for (let i = 0; i < nodes.length; i += columns) {
+      result.push(nodes.slice(i, i + columns));
     }
     return result;
-  }, [sortedNodes, columns]);
+  }, [nodes, columns]);
   
   // 估算行高 - 提供足够的高度避免截断
   const estimateSize = useCallback((index: number) => {

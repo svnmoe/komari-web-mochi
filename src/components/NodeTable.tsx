@@ -22,7 +22,6 @@ import { DetailsGrid } from "./DetailsGrid";
 import PingChartV2 from "@/pages/instance/PingChartV2";
 import { getOSImage } from "@/utils";
 import { getTrafficPercentage } from "@/utils/formatHelper";
-import { usePublicInfo } from "@/contexts/PublicInfoContext";
 
 interface NodeTableProps {
   nodes: NodeBasicInfo[];
@@ -41,8 +40,6 @@ const NodeTable: React.FC<NodeTableProps> = ({ nodes, liveData }) => {
   const [t] = useTranslation();
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
   const [sortState, setSortState] = useState<SortState>({ field: null, order: 'default' });
-  const { publicInfo } = usePublicInfo();
-  const offlineNodePosition = publicInfo?.theme_settings?.offlineNodePosition ?? "后面";
 
   const toggleRowExpansion = (uuid: string) => {
     setExpandedRows((prev) => {
@@ -104,23 +101,12 @@ const NodeTable: React.FC<NodeTableProps> = ({ nodes, liveData }) => {
     const aData = getNodeData(a.uuid);
     const bData = getNodeData(b.uuid);
 
-    // 如果没有排序字段或为默认排序，使用配置的排序逻辑
+    // 如果没有排序字段或为默认排序，保持父组件传入的顺序
     if (!sortState.field || sortState.order === 'default') {
-      // 根据配置决定离线节点位置
-      if (offlineNodePosition === "前面") {
-        // 离线节点在前
-        if (aOnline !== bOnline) return aOnline ? 1 : -1;
-      } else if (offlineNodePosition === "原位置") {
-        // 不区分在线状态，只按权重排序
-        // 继续执行下面的权重排序
-      } else {
-        // 默认：离线节点在后（后面）
-        if (aOnline !== bOnline) return aOnline ? -1 : 1;
-      }
-      return a.weight - b.weight;
+      return 0; // 保持原顺序，节点已在父组件排序
     }
 
-    // 自定义排序逻辑
+    // 用户点击列标题时的自定义排序逻辑
     let comparison = 0;
     switch (sortState.field) {
       case 'name':
