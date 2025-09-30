@@ -83,7 +83,7 @@ const NodeCompactCard: React.FC<NodeCompactCardProps> = ({ basic, live, online }
   } : null;
 
   return (
-    <Card size="2" className={`node-compact-card ${isExpanded ? 'expanded' : ''}`}>
+    <Card size="2" className={`node-compact-card ${isExpanded ? 'expanded' : ''} ${!online ? 'offline' : ''}`}>
       <Flex direction="column" gap="3">
         {/* Collapsed View */}
         <div>

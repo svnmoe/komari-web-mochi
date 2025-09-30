@@ -114,6 +114,7 @@ const ModernCardDynamicComponent: React.FC<ModernCardDynamicProps> = ({
         border border-accent-5 hover:border-accent-8
         cursor-pointer ${getStatusGlow()}
         h-full min-h-fit
+        ${!online ? 'modern-card-offline' : ''}
       `}
       style={{
         transform: 'scale(1)',
