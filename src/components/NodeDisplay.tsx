@@ -211,7 +211,38 @@ const NodeDisplay: React.FC<NodeDisplayProps> = ({ nodes, liveData, forceShowTra
     });
   }, [nodes, searchTerm, liveData, selectedGroup]);
 
-  const totalFiltered = filteredNodes.length;
+  // 稳定在线节点列表：使用排序后的字符串作为依赖，避免数组引用变化
+  const onlineNodesKey = useMemo(() =>
+    (liveData?.online || []).slice().sort().join(','),
+    [liveData?.online]
+  );
+
+  // 全局排序节点（应用权重+离线节点位置设置）
+  const sortedFilteredNodes = useMemo(() => {
+    const onlineSet = new Set(liveData?.online || []);
+    const offlineNodePosition = publicInfo?.theme_settings?.offlineNodePosition ?? "后面";
+
+    return [...filteredNodes].sort((a, b) => {
+      const aOnline = onlineSet.has(a.uuid);
+      const bOnline = onlineSet.has(b.uuid);
+
+      // 根据配置决定离线节点位置
+      if (offlineNodePosition === "前面") {
+        // 离线节点在前
+        if (aOnline !== bOnline) return aOnline ? 1 : -1;
+      } else if (offlineNodePosition === "原位置") {
+        // 不区分在线状态，只按权重排序
+        // 继续执行下面的权重排序
+      } else {
+        // 默认：离线节点在后（后面）
+        if (aOnline !== bOnline) return aOnline ? -1 : 1;
+      }
+
+      return a.weight - b.weight;
+    });
+  }, [filteredNodes, onlineNodesKey, publicInfo]);
+
+  const totalFiltered = sortedFilteredNodes.length;
   const paginationApplies =
     paginationEnabled && safeViewMode !== "task" && safeViewMode !== "earth";
 
@@ -272,11 +303,11 @@ const NodeDisplay: React.FC<NodeDisplayProps> = ({ nodes, liveData, forceShowTra
       : 0;
 
   const paginatedNodes = useMemo(() => {
-    if (!paginationApplies) return filteredNodes;
+    if (!paginationApplies) return sortedFilteredNodes;
     if (!hasNodes) return [];
     const start = (currentPage - 1) * pageSize;
-    return filteredNodes.slice(start, start + pageSize);
-  }, [filteredNodes, paginationApplies, hasNodes, currentPage, pageSize]);
+    return sortedFilteredNodes.slice(start, start + pageSize);
+  }, [sortedFilteredNodes, paginationApplies, hasNodes, currentPage, pageSize]);
 
   const handlePageInputChange = useCallback((value: string) => {
     if (/^\d*$/.test(value)) {
@@ -459,10 +490,10 @@ const NodeDisplay: React.FC<NodeDisplayProps> = ({ nodes, liveData, forceShowTra
             <NodeTable nodes={paginatedNodes} liveData={liveData} />
           )}
           {safeViewMode === "task" && (
-            <TaskDisplay nodes={filteredNodes} liveData={liveData} />
+            <TaskDisplay nodes={sortedFilteredNodes} liveData={liveData} />
           )}
           {safeViewMode === "earth" && (
-            <NodeEarthView nodes={filteredNodes} liveData={liveData} />
+            <NodeEarthView nodes={sortedFilteredNodes} liveData={liveData} />
           )}
         </>
       )}
@@ -663,37 +694,8 @@ type ModernGridProps = {
 
 const ModernGrid: React.FC<ModernGridProps> = ({ nodes, liveData, forceShowTrafficText }) => {
   const onlineNodes = liveData?.online || [];
-  const { publicInfo } = usePublicInfo();
-  const offlineNodePosition = publicInfo?.theme_settings?.offlineNodePosition ?? "后面";
-  
-  // 使用 useMemo 缓存排序结果，避免每次渲染都重新排序
-  const sortedNodes = useMemo(() => {
-    // 创建在线节点的 Set 以优化查找性能
-    const onlineSet = new Set(onlineNodes);
-    
-    return [...nodes].sort((a, b) => {
-      const aOnline = onlineSet.has(a.uuid);
-      const bOnline = onlineSet.has(b.uuid);
-      
-      // 根据配置决定离线节点位置
-      if (offlineNodePosition === "前面") {
-        // 离线节点在前
-        if (aOnline !== bOnline) return aOnline ? 1 : -1;
-      } else if (offlineNodePosition === "原位置") {
-        // 不区分在线状态，只按权重排序
-        // 继续执行下面的权重排序
-      } else {
-        // 默认：离线节点在后（后面）
-        if (aOnline !== bOnline) return aOnline ? -1 : 1;
-      }
-      
-      return a.weight - b.weight;
-    });
-  }, [nodes, onlineNodes, offlineNodePosition]);
 
-  // 使用响应式网格布局
-  // 移动端2列，平板3列，桌面端自适应多列
-  
+  // 节点已在父组件排序，直接使用
   return (
     <div
       className="modern-grid-container"
@@ -709,11 +711,11 @@ const ModernGrid: React.FC<ModernGridProps> = ({ nodes, liveData, forceShowTraff
         overflowX: "hidden"
       }}
     >
-        {sortedNodes.map((node) => {
+        {nodes.map((node) => {
           const isOnline = onlineNodes.includes(node.uuid);
           const nodeData = liveData?.data?.[node.uuid];
           return (
-            <div 
+            <div
               key={node.uuid}
               style={{
                 contain: "layout style paint",
@@ -741,35 +743,11 @@ type CompactListProps = {
 
 const CompactList: React.FC<CompactListProps> = ({ nodes, liveData }) => {
   const onlineNodes = liveData?.online || [];
-  const { publicInfo } = usePublicInfo();
-  const offlineNodePosition = publicInfo?.theme_settings?.offlineNodePosition ?? "后面";
-  
-  const sortedNodes = useMemo(() => {
-    const onlineSet = new Set(onlineNodes);
-    
-    return [...nodes].sort((a, b) => {
-      const aOnline = onlineSet.has(a.uuid);
-      const bOnline = onlineSet.has(b.uuid);
-      
-      // 根据配置决定离线节点位置
-      if (offlineNodePosition === "前面") {
-        // 离线节点在前
-        if (aOnline !== bOnline) return aOnline ? 1 : -1;
-      } else if (offlineNodePosition === "原位置") {
-        // 不区分在线状态，只按权重排序
-        // 继续执行下面的权重排序
-      } else {
-        // 默认：离线节点在后（后面）
-        if (aOnline !== bOnline) return aOnline ? -1 : 1;
-      }
-      
-      return a.weight - b.weight;
-    });
-  }, [nodes, onlineNodes, offlineNodePosition]);
 
+  // 节点已在父组件排序，直接使用
   return (
     <Flex direction="column" gap="2" className="p-4">
-      {sortedNodes.map((node) => {
+      {nodes.map((node) => {
         const isOnline = onlineNodes.includes(node.uuid);
         const nodeData = liveData?.data?.[node.uuid];
         return (

@@ -317,37 +317,12 @@ import type { NodeBasicInfo } from "@/contexts/NodeListContext";
 import PriceTags from "./PriceTags";
 import { getOSImage, getOSName } from "@/utils";
 import { getTrafficPercentage, getTrafficUsage } from "@/utils/formatHelper";
-import { usePublicInfo } from "@/contexts/PublicInfoContext";
 
 export const NodeGrid = ({ nodes, liveData }: NodeGridProps) => {
   // 确保liveData是有效的
   const onlineNodes = liveData && liveData.online ? liveData.online : [];
 
-  // 获取离线节点位置配置
-  const { publicInfo } = usePublicInfo();
-  const offlineNodePosition = publicInfo?.theme_settings?.offlineNodePosition ?? "后面";
-
-  // 排序节点：根据配置决定离线节点位置
-  const sortedNodes = [...nodes].sort((a, b) => {
-    const aOnline = onlineNodes.includes(a.uuid);
-    const bOnline = onlineNodes.includes(b.uuid);
-
-    // 根据配置决定离线节点位置
-    if (offlineNodePosition === "前面") {
-      // 离线节点在前
-      if (aOnline !== bOnline) return aOnline ? 1 : -1;
-    } else if (offlineNodePosition === "原位置") {
-      // 不区分在线状态，只按权重排序
-      // 继续执行下面的权重排序
-    } else {
-      // 默认：离线节点在后（后面）
-      if (aOnline !== bOnline) return aOnline ? -1 : 1;
-    }
-
-    // 按权重升序排序
-    return a.weight - b.weight;
-  });
-
+  // 节点已在父组件排序，直接使用
   return (
     <Box
       className="gap-2 md:gap-4"
@@ -359,7 +334,7 @@ export const NodeGrid = ({ nodes, liveData }: NodeGridProps) => {
         boxSizing: "border-box",
       }}
     >
-      {sortedNodes.map((node) => {
+      {nodes.map((node) => {
         const isOnline = onlineNodes.includes(node.uuid);
         const nodeData =
           liveData && liveData.data ? liveData.data[node.uuid] : undefined;
