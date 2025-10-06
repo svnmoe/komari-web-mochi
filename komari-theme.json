@@ -32,9 +32,9 @@
                 "key":"taiwanFlagDisplay",
                 "name":"台湾地区旗帜显示",
                 "type":"select",
-                "options":"中国大陆旗帜,不显示,原版",
+                "options":"中国大陆旗帜,不显示",
                 "default":"中国大陆旗帜",
-                "help":"设置台湾地区节点的旗帜显示方式。中国大陆旗帜：显示为CN旗帜；不显示：显示为UN旗帜；原版：显示TW地区旗帜。"
+                "help":"设置台湾地区节点的旗帜显示方式。中国大陆旗帜：显示为CN旗帜；不显示：显示为UN旗帜。"
             },
             {
                 "key":"defaultViewMode",
@@ -57,6 +57,88 @@
                 "type":"input",
                 "default":"24",
                 "help":"设置启用分页后每页显示的节点数量。"
+            },
+            {
+                "name":"外观定制",
+                "type":"title"
+            },
+            {
+                "key":"customBackground.enabled",
+                "name":"启用自定义背景",
+                "type":"switch",
+                "default": false,
+                "help":"开启后可以设置自定义背景图片，关闭则使用默认背景。"
+            },
+            {
+                "key":"customBackground.imageUrl",
+                "name":"背景图片URL",
+                "type":"input",
+                "default":"",
+                "help":"背景图片的URL地址，支持图片直链或随机图API。留空则不显示背景图。"
+            },
+            {
+                "key":"customBackground.fixed",
+                "name":"背景固定显示",
+                "type":"switch",
+                "default": true,
+                "help":"开启后背景图片固定不随页面滚动，关闭则背景会随内容滚动。"
+            },
+            {
+                "key":"glassmorphism.enabled",
+                "name":"启用玻璃拟态效果",
+                "type":"switch",
+                "default": false,
+                "help":"开启后界面组件会呈现半透明毛玻璃效果，需要配合自定义背景使用效果更佳。"
+            },
+            {
+                "key":"glassmorphism.blurStrength",
+                "name":"毛玻璃模糊强度",
+                "type":"input",
+                "default":"5",
+                "help":"设置背景模糊程度，单位px，范围0-20，数值越大越模糊。"
+            },
+            {
+                "key":"glassmorphism.lightOpacity",
+                "name":"浅色模式透明度",
+                "type":"input",
+                "default":"30",
+                "help":"浅色主题下所有组件背景透明度，范围0-100，0为完全透明，100为完全不透明。影响导航栏、页脚、节点卡片等所有组件。"
+            },
+            {
+                "key":"glassmorphism.darkOpacity",
+                "name":"深色模式透明度",
+                "type":"input",
+                "default":"30",
+                "help":"深色主题下所有组件背景透明度，范围0-100，0为完全透明，100为完全不透明。影响导航栏、页脚、节点卡片等所有组件。"
+            },
+            {
+                "key":"layout.containerWidth",
+                "name":"主容器宽度",
+                "type":"select",
+                "options":"80vw,90vw,95vw,100vw",
+                "default":"100vw",
+                "help":"设置主要内容区域的宽度。100vw为全屏宽度，80vw为屏幕80%宽度。"
+            },
+            {
+                "key":"layout.opacity",
+                "name":"整体透明度",
+                "type":"input",
+                "default":"95",
+                "help":"整体布局透明度，范围80-100，100为完全不透明。"
+            },
+            {
+                "key":"layout.borderRadius",
+                "name":"圆角大小",
+                "type":"input",
+                "default":"8",
+                "help":"组件圆角大小，单位px，范围0-16，0为直角。"
+            },
+            {
+                "key":"shadow.glowStrength",
+                "name":"光晕强度",
+                "type":"input",
+                "default":"5",
+                "help":"组件阴影/光晕强度，单位px，范围0-20，0为无阴影。"
             }
         ]
     }

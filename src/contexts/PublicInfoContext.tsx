@@ -20,6 +20,17 @@ export interface PublicInfo {
     defaultViewMode?: string;
     enablePagination?: boolean;
     paginationPageSize?: number | string;
+    "customBackground.enabled"?: boolean;
+    "customBackground.imageUrl"?: string;
+    "customBackground.fixed"?: boolean;
+    "glassmorphism.enabled"?: boolean;
+    "glassmorphism.blurStrength"?: number | string;
+    "glassmorphism.lightOpacity"?: number | string;
+    "glassmorphism.darkOpacity"?: number | string;
+    "layout.containerWidth"?: string;
+    "layout.opacity"?: number | string;
+    "layout.borderRadius"?: number | string;
+    "shadow.glowStrength"?: number | string;
     [key: string]: any;
   };
   [property: string]: any;
