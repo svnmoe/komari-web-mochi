@@ -93,10 +93,10 @@ const StatusBar: React.FC<StatusBarProps> = ({
   };
 
   return (
-    <Card className="status-bar-container mx-4 mb-2 relative overflow-hidden py-2 px-3">
+    <Card className="status-bar-container mx-4 mb-2 relative py-2 px-3">
       <Flex direction="column" gap="0">
         {/* Settings button */}
-        <div className="absolute top-2 right-2 z-10">
+        <div className="status-settings-button absolute top-2 right-2 z-10">
           <Popover.Root>
             <Popover.Trigger>
               <IconButton variant="ghost" size="1" className="hover:bg-gray-3 transition-all">
@@ -113,10 +113,10 @@ const StatusBar: React.FC<StatusBarProps> = ({
         </div>
 
         {/* Status cards grid - Dynamic flex layout */}
-        <div className="flex flex-wrap gap-3">
+        <div className="status-cards-grid">
           {/* Current Time */}
           {statusCardsVisibility.currentTime && (
-            <div className="flex-1 min-w-[160px] sm:min-w-[180px] md:min-w-[200px] status-time-wrapper">
+            <div className="status-card-wrapper status-time-wrapper">
               <StatusCard
                 icon={<Activity className="text-gray-11" size={16} />}
                 title={t("current_time")}
@@ -128,7 +128,7 @@ const StatusBar: React.FC<StatusBarProps> = ({
 
           {/* Online Status */}
           {statusCardsVisibility.currentOnline && (
-            <div className="flex-1 min-w-[160px] sm:min-w-[180px] md:min-w-[200px] status-online-wrapper">
+            <div className="status-card-wrapper status-online-wrapper">
               <StatusCard
                 icon={<Server className="text-gray-11" size={16} />}
                 title={t("current_online")}
@@ -156,7 +156,7 @@ const StatusBar: React.FC<StatusBarProps> = ({
 
           {/* Regions */}
           {statusCardsVisibility.regionOverview && (
-            <div className="flex-1 min-w-[160px] sm:min-w-[180px] md:min-w-[200px] status-region-wrapper">
+            <div className="status-card-wrapper status-region-wrapper">
               <StatusCard
                 icon={<Globe className="text-gray-11" size={16} />}
                 title={t("region_overview")}
@@ -168,7 +168,7 @@ const StatusBar: React.FC<StatusBarProps> = ({
 
           {/* Traffic Overview */}
           {statusCardsVisibility.trafficOverview && (
-            <div className="flex-1 min-w-[160px] sm:min-w-[180px] md:min-w-[200px] status-traffic-wrapper">
+            <div className="status-card-wrapper status-traffic-wrapper">
               <StatusCard
                 icon={<Network className="text-gray-11" size={16} />}
                 title={t("traffic_overview")}
@@ -189,7 +189,7 @@ const StatusBar: React.FC<StatusBarProps> = ({
 
           {/* Network Speed Chart */}
           {statusCardsVisibility.networkSpeed && (
-            <div className="flex-1 min-w-[200px] sm:min-w-[250px] md:min-w-[300px] status-speed-wrapper">
+            <div className="status-card-wrapper status-speed-wrapper">
               <StatusCard
                 icon={<TrendingUp className="text-gray-11" size={16} />}
                 title={t("network_speed")}
