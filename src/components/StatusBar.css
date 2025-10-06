@@ -104,22 +104,48 @@
 }
 
 
-/* Responsive adjustments */
+/* Status cards grid - desktop uses flex, mobile uses grid */
+.status-cards-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.status-card-wrapper {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+/* Speed card should be wider on desktop */
+.status-speed-wrapper {
+  flex: 1.5 1 0;
+  min-width: 0;
+}
+
+/* Mobile responsive - switch to grid layout */
 @media (max-width: 640px) {
   .status-bar-container {
     margin: 0.5rem;
     padding: 0.5rem !important;
   }
 
-  .status-bar-container > div > div {
+  .status-cards-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 0.5rem;
   }
 
+  .status-card-wrapper {
+    min-width: 0;
+    max-width: none;
+  }
+
   /* Speed card takes full width on mobile */
   .status-speed-wrapper {
     grid-column: 1 / -1;
+    min-width: 0;
+    max-width: none;
   }
 
   .status-card {
@@ -159,9 +185,35 @@
   }
 
   /* Settings button position on mobile */
-  .status-bar-container > div > div:first-child {
-    top: 0.25rem;
-    right: 0.25rem;
+  .status-settings-button {
+    top: 0.25rem !important;
+    right: 0.25rem !important;
+  }
+}
+
+/* Small desktop / Tablet - prevent cards from being too small */
+@media (min-width: 641px) and (max-width: 1200px) {
+  .status-card-wrapper {
+    flex: 1 1 calc(33.333% - 0.75rem);
+    min-width: 0;
+  }
+
+  .status-speed-wrapper {
+    flex: 1 1 calc(33.333% - 0.75rem);
+    min-width: 0;
+  }
+}
+
+/* Large desktop - 5 cards in one row */
+@media (min-width: 1201px) {
+  .status-card-wrapper {
+    flex: 1 1 calc(20% - 0.75rem);
+    min-width: 0;
+  }
+
+  .status-speed-wrapper {
+    flex: 1.5 1 calc(20% - 0.75rem);
+    min-width: 0;
   }
 }
 
