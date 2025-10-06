@@ -29,11 +29,10 @@ export const CustomStyleInjector = () => {
     };
 
     // 提取配置值
-    const bgEnabled = parseBool(settings['customBackground.enabled']);
+    const customEnabled = parseBool(settings['customAppearance.enabled']);
     const bgUrl = settings['customBackground.imageUrl'] || '';
     const bgFixed = parseBool(settings['customBackground.fixed']);
 
-    const glassEnabled = parseBool(settings['glassmorphism.enabled']);
     const blurStrength = parseNumber(settings['glassmorphism.blurStrength'], 5, 0, 20);
     const lightOpacity = parseNumber(settings['glassmorphism.lightOpacity'], 30, 0, 100);
     const darkOpacity = parseNumber(settings['glassmorphism.darkOpacity'], 30, 0, 100);
@@ -57,27 +56,33 @@ export const CustomStyleInjector = () => {
       }
     `;
 
-    // 背景图片样式
-    if (bgEnabled && bgUrl) {
+    // 自定义外观效果
+    if (customEnabled) {
+      // 背景图片样式
+      if (bgUrl) {
+        cssContent += `
+          body {
+            background: url('${bgUrl}') no-repeat center center ${bgFixed ? 'fixed' : 'scroll'};
+            background-size: cover;
+          }
+
+          body::-webkit-scrollbar {
+            display: none;
+          }
+        `;
+      }
+
+      // 玻璃拟态效果
       cssContent += `
+        /* 防止水平滚动 */
         body {
-          background: url('${bgUrl}') no-repeat center center ${bgFixed ? 'fixed' : 'scroll'};
-          background-size: cover;
+          overflow-x: hidden;
         }
 
-        body::-webkit-scrollbar {
-          display: none;
-        }
-      `;
-    }
-
-    // 玻璃拟态效果
-    if (glassEnabled) {
-      cssContent += `
         /* 主布局容器 - 透明 */
         .layout {
-          min-width: var(--custom-container-width);
-          max-width: 100vw;
+          width: var(--custom-container-width);
+          max-width: 100%;
           background-color: transparent !important;
           opacity: var(--custom-layout-opacity);
         }
@@ -113,6 +118,8 @@ export const CustomStyleInjector = () => {
         .footer {
           border-radius: 0 0 var(--custom-border-radius) var(--custom-border-radius);
           margin: calc(var(--spacing) * 1);
+          margin-left: 0;
+          margin-right: 0;
           background-color: rgba(255, 255, 255, var(--custom-light-opacity)) !important;
           backdrop-filter: blur(var(--custom-blur-strength));
           -webkit-backdrop-filter: blur(var(--custom-blur-strength));
@@ -122,6 +129,8 @@ export const CustomStyleInjector = () => {
         .nav-bar {
           border-radius: var(--custom-border-radius) var(--custom-border-radius) 0 0;
           margin: calc(var(--spacing) * 1);
+          margin-left: 0;
+          margin-right: 0;
           background-color: rgba(255, 255, 255, var(--custom-light-opacity)) !important;
           backdrop-filter: blur(var(--custom-blur-strength));
           -webkit-backdrop-filter: blur(var(--custom-blur-strength));
@@ -206,8 +215,8 @@ export const CustomStyleInjector = () => {
       document.head.appendChild(styleElement);
     }
 
-    // 如果没有启用任何自定义样式,移除style元素
-    if (!bgEnabled && !glassEnabled) {
+    // 如果没有启用自定义外观,清空样式
+    if (!customEnabled) {
       styleElement.textContent = '';
       return;
     }

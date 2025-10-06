@@ -20,10 +20,9 @@ export interface PublicInfo {
     defaultViewMode?: string;
     enablePagination?: boolean;
     paginationPageSize?: number | string;
-    "customBackground.enabled"?: boolean;
+    "customAppearance.enabled"?: boolean;
     "customBackground.imageUrl"?: string;
     "customBackground.fixed"?: boolean;
-    "glassmorphism.enabled"?: boolean;
     "glassmorphism.blurStrength"?: number | string;
     "glassmorphism.lightOpacity"?: number | string;
     "glassmorphism.darkOpacity"?: number | string;
