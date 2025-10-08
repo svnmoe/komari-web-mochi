@@ -26,7 +26,6 @@ export interface PublicInfo {
     "glassmorphism.blurStrength"?: number | string;
     "glassmorphism.lightOpacity"?: number | string;
     "glassmorphism.darkOpacity"?: number | string;
-    "layout.containerWidth"?: string;
     "layout.opacity"?: number | string;
     "layout.borderRadius"?: number | string;
     "shadow.glowStrength"?: number | string;
