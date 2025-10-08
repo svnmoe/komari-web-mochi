@@ -151,13 +151,12 @@ export const CustomStyleInjector = () => {
           border: 1px solid rgba(255, 255, 255, 0.3);
         }
 
-        /* 文字颜色增强 */
+        /* 文字颜色增强 - 基础容器 */
         body,
         .card-base,
         .main-content,
         .footer,
         .rt-ScrollAreaViewport,
-        .status-card,
         .radix-themes {
           color: #1a1a1a !important;
         }
@@ -167,37 +166,76 @@ export const CustomStyleInjector = () => {
         .dark .main-content,
         .dark .footer,
         .dark .rt-ScrollAreaViewport,
-        .dark .status-card,
         .dark .radix-themes {
           color: #f0f0f0 !important;
         }
 
-        /* 导航栏基础文字颜色 */
-        .nav-bar {
+        /* StatusBar - 只设置基础文本颜色，不影响图标和内联样式 */
+        .status-card > div > div > div > span:not([style*="color"]),
+        .status-card > div > div > div > p:not([style*="color"]) {
           color: #1a1a1a !important;
         }
 
-        .dark .nav-bar {
+        .dark .status-card > div > div > div > span:not([style*="color"]),
+        .dark .status-card > div > div > div > p:not([style*="color"]) {
           color: #f0f0f0 !important;
         }
 
-        /* 导航栏中有内联样式的元素保留原色 - 使用unset让内联样式生效 */
-        .nav-bar [style*="color"] {
-          color: unset !important;
+        /* 导航栏标题文字 - 使用 Radix UI 主文本颜色 */
+        .nav-bar > div > a > label {
+          color: var(--gray-12) !important;
         }
 
-        /* 文字元素继承颜色 */
+        /* 导航栏描述文字 - 使用 Radix UI accent 颜色 */
+        .nav-bar > div > div > label {
+          color: var(--accent-11) !important;
+        }
+
+        /* 保留所有内联样式颜色 */
+        [style*="color"] {
+          color: revert !important;
+        }
+
+        /* 按钮、图标按钮 - 使用 Radix UI 颜色变量 */
+        .rt-IconButton,
+        .rt-Button,
+        a.rt-Button {
+          color: var(--accent-11) !important;
+        }
+
+        .rt-IconButton:hover,
+        .rt-Button:hover {
+          color: var(--accent-12) !important;
+        }
+
+        /* 开关按钮保持原有背景色，不受透明度影响 */
+        button[role="switch"] {
+          background-color: revert !important;
+          backdrop-filter: none !important;
+          -webkit-backdrop-filter: none !important;
+        }
+
+        /* Popover 弹出层保持不透明背景 */
+        .rt-PopoverContent {
+          background-color: var(--color-panel-solid) !important;
+          backdrop-filter: none !important;
+          -webkit-backdrop-filter: none !important;
+        }
+
+        /* Popover 内的文字使用 Radix UI 颜色 */
+        .rt-PopoverContent,
+        .rt-PopoverContent * {
+          color: var(--gray-12) !important;
+        }
+
+        /* Popover 内的次要文字 */
+        .rt-PopoverContent .rt-Text[size="2"] {
+          color: var(--gray-11) !important;
+        }
+
+        /* 移除文字阴影 */
         .radix-themes * {
           text-shadow: none !important;
-        }
-
-        .radix-themes p,
-        .radix-themes span,
-        .radix-themes div,
-        .radix-themes label,
-        .radix-themes button,
-        .radix-themes a {
-          color: inherit;
         }
       `;
     }
