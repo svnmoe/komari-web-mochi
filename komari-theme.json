@@ -105,14 +105,6 @@
                 "help":"深色主题下所有组件背景透明度，范围0-100，0为完全透明，100为完全不透明。影响导航栏、页脚、节点卡片等所有组件。"
             },
             {
-                "key":"layout.containerWidth",
-                "name":"主容器宽度",
-                "type":"select",
-                "options":"80vw,90vw,95vw,100vw",
-                "default":"100vw",
-                "help":"设置主要内容区域的宽度。100vw为全屏宽度，80vw为屏幕80%宽度。"
-            },
-            {
                 "key":"layout.opacity",
                 "name":"整体透明度",
                 "type":"input",

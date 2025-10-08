@@ -37,7 +37,6 @@ export const CustomStyleInjector = () => {
     const lightOpacity = parseNumber(settings['glassmorphism.lightOpacity'], 30, 0, 100);
     const darkOpacity = parseNumber(settings['glassmorphism.darkOpacity'], 30, 0, 100);
 
-    const containerWidth = settings['layout.containerWidth'] || '100vw';
     const layoutOpacity = parseNumber(settings['layout.opacity'], 95, 80, 100) / 100;
     const borderRadius = parseNumber(settings['layout.borderRadius'], 8, 0, 16);
 
@@ -46,7 +45,6 @@ export const CustomStyleInjector = () => {
     // 生成CSS内容
     let cssContent = `
       :root {
-        --custom-container-width: ${containerWidth};
         --custom-layout-opacity: ${layoutOpacity};
         --custom-border-radius: ${borderRadius}px;
         --custom-glow-strength: ${glowStrength}px;
@@ -81,8 +79,6 @@ export const CustomStyleInjector = () => {
 
         /* 主布局容器 - 透明 */
         .layout {
-          width: var(--custom-container-width);
-          max-width: 100%;
           background-color: transparent !important;
           opacity: var(--custom-layout-opacity);
         }
