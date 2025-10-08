@@ -16,7 +16,6 @@ export interface PublicInfo {
   theme_settings: {
     enableVirtualScroll?: boolean;
     offlineNodePosition?: string;
-    taiwanFlagDisplay?: string;
     defaultViewMode?: string;
     enablePagination?: boolean;
     paginationPageSize?: number | string;

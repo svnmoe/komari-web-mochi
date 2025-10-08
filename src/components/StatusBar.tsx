@@ -319,11 +319,11 @@ const StatusSettings: React.FC<StatusSettingsProps> = ({ visibility, onVisibilit
             <button
               type="button"
               role="switch"
-              aria-checked={visibility[setting.key] ?? true}
+              aria-checked={!!(visibility[setting.key] ?? true)}
               onClick={() => toggleVisibility(setting.key)}
               className={`
                 relative inline-flex h-5 w-9 items-center rounded-full transition-all duration-200
-                ${visibility[setting.key] ? 'bg-accent-9' : 'bg-gray-5'}
+                ${(visibility[setting.key] ?? true) ? 'bg-accent-9' : 'bg-gray-5'}
                 focus:outline-none focus:ring-2 focus:ring-accent-8 focus:ring-offset-2
                 group-hover:shadow-sm
               `}
@@ -332,7 +332,7 @@ const StatusSettings: React.FC<StatusSettingsProps> = ({ visibility, onVisibilit
               <span
                 className={`
                   inline-block h-4 w-4 transform rounded-full bg-white shadow-sm transition-all duration-200
-                  ${visibility[setting.key] ? 'translate-x-[18px]' : 'translate-x-[2px]'}
+                  ${(visibility[setting.key] ?? true) ? 'translate-x-[18px]' : 'translate-x-[2px]'}
                 `}
               />
             </button>

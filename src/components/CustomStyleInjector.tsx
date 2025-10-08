@@ -210,9 +210,17 @@ export const CustomStyleInjector = () => {
 
         /* 开关按钮保持原有背景色，不受透明度影响 */
         button[role="switch"] {
-          background-color: revert !important;
           backdrop-filter: none !important;
           -webkit-backdrop-filter: none !important;
+        }
+
+        /* 开关按钮状态颜色 */
+        button[role="switch"][aria-checked="true"] {
+          background-color: var(--accent-9) !important;
+        }
+
+        button[role="switch"][aria-checked="false"] {
+          background-color: var(--gray-5) !important;
         }
 
         /* Popover 弹出层保持不透明背景 */

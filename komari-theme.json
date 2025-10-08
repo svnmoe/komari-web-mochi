@@ -29,14 +29,6 @@
                 "help":"设置离线节点的显示位置。前面：离线节点显示在最前；原位置：按权重排序不区分在线状态；后面：离线节点显示在最后。"
             },
             {
-                "key":"taiwanFlagDisplay",
-                "name":"台湾地区旗帜显示",
-                "type":"select",
-                "options":"中国大陆旗帜,不显示",
-                "default":"中国大陆旗帜",
-                "help":"设置台湾地区节点的旗帜显示方式。中国大陆旗帜：显示为CN旗帜；不显示：显示为UN旗帜。"
-            },
-            {
                 "key":"defaultViewMode",
                 "name":"默认视图模式",
                 "type":"select",
