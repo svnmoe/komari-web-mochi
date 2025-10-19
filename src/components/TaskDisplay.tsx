@@ -923,9 +923,18 @@ const TaskDisplay: React.FC<TaskDisplayProps> = ({ nodes, liveData }) => {
     const displayPayload = validPayload.slice(0, 10);
     const hasMore = validPayload.length > 10;
 
+    // 使用纯色背景,确保最佳兼容性
+    const tooltipStyle = {
+      minWidth: "180px",
+      maxWidth: "300px",
+      backgroundColor: "rgba(0, 0, 0, 0.95)",
+      border: "1px solid rgba(255, 255, 255, 0.15)",
+    };
+
+    const tooltipClassName = "p-3 rounded-lg shadow-xl";
+
     return (
-      <div className="bg-black/90 backdrop-blur-sm p-3 rounded-lg border border-white/10 shadow-xl" 
-           style={{ minWidth: "180px", maxWidth: "300px" }}>
+      <div className={tooltipClassName} style={tooltipStyle}>
         <p className="text-white font-medium text-xs mb-2">
           {new Date(label).toLocaleString([], { 
             month: "short",

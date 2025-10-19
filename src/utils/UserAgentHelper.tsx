@@ -51,4 +51,36 @@ export class UserAgentHelper {
     const { device, browser, version } = this.parse(userAgent);
     return `${device} ${browser}/${version}`;
   }
+
+  /**
+   * 检测是否需要禁用backdrop-filter以提升性能
+   * Windows Chrome/Edge 和 Android Chrome 在使用 backdrop-filter 时可能出现性能问题
+   */
+  static shouldDisableBackdropFilter(userAgent: string = navigator.userAgent): boolean {
+    const { device, browser } = this.parse(userAgent);
+
+    // Android Chrome (已知问题: backdrop-filter + 透明背景导致UI降级)
+    if (device === "Android" && browser === "Chrome") {
+      return true;
+    }
+
+    // Windows Chrome/Edge (已知问题: backdrop-filter性能问题)
+    if (device === "Windows" && (browser === "Chrome" || browser === "Edge")) {
+      return true;
+    }
+
+    return false;
+  }
+
+  /**
+   * 检测是否为移动设备
+   */
+  static isMobile(userAgent: string = navigator.userAgent): boolean {
+    const ua = userAgent.toLowerCase();
+    const mobileKeywords = [
+      'mobile', 'android', 'iphone', 'ipad', 'ipod', 'blackberry',
+      'windows phone', 'webos', 'opera mini', 'opera mobi'
+    ];
+    return mobileKeywords.some(keyword => ua.includes(keyword));
+  }
 }

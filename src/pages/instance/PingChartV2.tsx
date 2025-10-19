@@ -148,27 +148,28 @@ const PingChartV2 = ({ uuid }: { uuid: string }) => {
     const ua = navigator.userAgent.toLowerCase();
     return ua.includes('safari') && !ua.includes('chrome') && !ua.includes('android');
   }, []);
-  
+
   // 检测是否为移动设备（更全面的判断）
   const isMobile = useMemo(() => {
     const ua = navigator.userAgent.toLowerCase();
     // 检查多种移动设备标识
     const mobileKeywords = [
-      'mobile', 'android', 'iphone', 'ipad', 'ipod', 'blackberry', 
+      'mobile', 'android', 'iphone', 'ipad', 'ipod', 'blackberry',
       'windows phone', 'webos', 'opera mini', 'opera mobi'
     ];
-    
+
     // 检查触摸设备
     const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-    
+
     // 检查屏幕宽度
     const isSmallScreen = window.innerWidth <= 768;
-    
+
     // 检查 UA 字符串
     const hasMobileUA = mobileKeywords.some(keyword => ua.includes(keyword));
-    
+
     return hasMobileUA || (hasTouch && isSmallScreen);
   }, []);
+
 
   // 更新时间范围
   useEffect(() => {
@@ -537,10 +538,19 @@ const PingChartV2 = ({ uuid }: { uuid: string }) => {
 
     if (!filteredPayload.length) return null;
 
+    // 使用纯色背景,确保最佳兼容性
+    const tooltipStyle = {
+      minWidth: "200px",
+      backgroundColor: "rgba(0, 0, 0, 0.95)",
+      border: "1px solid rgba(255, 255, 255, 0.15)",
+    };
+
+    const tooltipClassName = "p-3 rounded-xl shadow-2xl";
+
     return (
       <div
-        className="bg-black/90 backdrop-blur-xl p-3 rounded-xl border border-white/10 shadow-2xl"
-        style={{ minWidth: "200px" }}
+        className={tooltipClassName}
+        style={tooltipStyle}
       >
         <p className="text-white font-medium text-sm mb-2">
           {tooltipFormatter(label)}
@@ -1204,35 +1214,39 @@ const PingChartV2 = ({ uuid }: { uuid: string }) => {
 
             {/* 控制按钮 - 添加 ignore-export 类以在导出时忽略 */}
             <div className="flex items-center justify-between gap-4 mt-4 flex-wrap ignore-export">
-              <div className="flex items-center gap-3">
-                <Switch
-                  id="cut-peak"
-                  checked={cutPeak}
-                  onCheckedChange={setCutPeak}
-                  size="1"
-                />
-                <label
-                  htmlFor="cut-peak"
-                  className="text-xs font-medium flex items-center gap-1"
-                >
-                  {t("chart.cutPeak")}
-                  <Tips>
-                    <span dangerouslySetInnerHTML={{ __html: t("chart.cutPeak_tips") }} />
-                  </Tips>
-                </label>
-                
-                <Switch
-                  id="connect-nulls"
-                  checked={connectNulls}
-                  onCheckedChange={setConnectNulls}
-                  size="1"
-                />
-                <label
-                  htmlFor="connect-nulls"
-                  className="text-xs font-medium"
-                >
-                  {t("chart.connectNulls")}
-                </label>
+              <div className="flex items-center gap-3 flex-wrap">
+                <div className="flex items-center gap-2">
+                  <Switch
+                    id="cut-peak"
+                    checked={cutPeak}
+                    onCheckedChange={setCutPeak}
+                    size="1"
+                  />
+                  <label
+                    htmlFor="cut-peak"
+                    className="text-xs font-medium flex items-center gap-1 cursor-pointer"
+                  >
+                    {t("chart.cutPeak")}
+                    <Tips>
+                      <span dangerouslySetInnerHTML={{ __html: t("chart.cutPeak_tips") }} />
+                    </Tips>
+                  </label>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <Switch
+                    id="connect-nulls"
+                    checked={connectNulls}
+                    onCheckedChange={setConnectNulls}
+                    size="1"
+                  />
+                  <label
+                    htmlFor="connect-nulls"
+                    className="text-xs font-medium cursor-pointer"
+                  >
+                    {t("chart.connectNulls")}
+                  </label>
+                </div>
                 
                 {/* Chart Type Selector - 桌面端 */}
                 {!isMobile && (
