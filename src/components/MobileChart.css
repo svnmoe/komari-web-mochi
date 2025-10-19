@@ -53,14 +53,14 @@
   stroke-opacity: 0.2;
 }
 
-/* 触摸优化的工具提示 */
+/* 触摸优化的工具提示 - 使用纯色背景确保最佳兼容性 */
 .mobile-chart .recharts-tooltip-wrapper {
   pointer-events: none;
 }
 
 .mobile-chart .recharts-tooltip-content {
-  background: #1f2937 !important;
-  border: 1px solid #4b5563 !important;
+  background: rgba(31, 41, 55, 0.98) !important;
+  border: 1px solid rgba(75, 85, 99, 0.8) !important;
   border-radius: 8px;
   padding: 0.5rem !important;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);

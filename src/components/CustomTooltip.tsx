@@ -27,12 +27,15 @@ export const CustomTooltip: React.FC<TooltipData> = ({ label, datasets, lossRate
     return { color: '#EF4444', icon: AlertCircle, text: '较差' };
   };
 
+  // 使用纯色背景,确保最佳兼容性
+  const cardStyle = {
+    minWidth: '280px',
+    background: 'rgba(255, 255, 255, 0.98)',
+    border: '1px solid rgba(0, 0, 0, 0.1)',
+  };
+
   return (
-    <Card className="p-3 shadow-xl border border-gray-200" style={{
-      minWidth: '280px',
-      background: 'rgba(255, 255, 255, 0.98)',
-      backdropFilter: 'blur(8px)',
-    }}>
+    <Card className="p-3 shadow-xl border border-gray-200" style={cardStyle}>
       {/* 时间标题 */}
       <div className="flex items-center gap-2 mb-3 pb-2 border-b border-gray-100">
         <Clock size={14} className="text-gray-500" />

@@ -91,14 +91,13 @@
   min-height: 0;
 }
 
-/* 自定义 Tooltip */
+/* 自定义 Tooltip - 使用纯色背景确保最佳兼容性 */
 .desktop-chart-tooltip {
-  background: rgba(0, 0, 0, 0.9) !important;
-  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  background: rgba(0, 0, 0, 0.95) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
   border-radius: 8px;
   padding: 0.75rem !important;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(10px);
 }
 
 .desktop-chart-tooltip .tooltip-time {

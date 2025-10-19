@@ -1,8 +1,8 @@
-import { Card, Flex, Text, Badge, SegmentedControl } from "@radix-ui/themes";
+import { Card, Flex, Text, Badge, SegmentedControl, Dialog, Button } from "@radix-ui/themes";
 import { useTranslation } from "react-i18next";
 import { formatBytes, formatUptime } from "./Node";
 import { getTrafficStats } from "@/utils";
-import { Activity, Cpu, HardDrive, Network, Server, Clock, Monitor, Microchip, Zap } from "lucide-react";
+import { Activity, Cpu, HardDrive, Network, Server, Clock, Monitor, Microchip, Zap, Info } from "lucide-react";
 import UsageBar from "./UsageBar";
 import type { NodeBasicInfo } from "@/contexts/NodeListContext";
 import type { Record } from "@/types/LiveData";
@@ -281,30 +281,102 @@ export const MobileDetailsCard: React.FC<MobileDetailsCardProps> = ({
 //   </Flex>
 // );
 
-const InfoRowWithIcon: React.FC<{ icon: React.ReactNode; label: string; value: string }> = ({ icon, label, value }) => (
-  <div style={{
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: "10px 14px",
-    backgroundColor: "var(--gray-a2)",
-    borderRadius: "8px",
-    border: "1px solid var(--gray-a4)",
-    transition: "all 0.2s ease"
-  }}>
-    <Flex align="center" gap="2" className="min-w-0">
-      <div style={{ color: "var(--accent-9)", flexShrink: 0 }}>
-        {icon}
+const InfoRowWithIcon: React.FC<{ icon: React.ReactNode; label: string; value: string }> = ({ icon, label, value }) => {
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [longPressTimer, setLongPressTimer] = useState<NodeJS.Timeout | null>(null);
+
+  // 检测文本是否被截断
+  const isTruncated = value.length > 20;
+
+  const handleTouchStart = () => {
+    if (isTruncated) {
+      const timer = setTimeout(() => {
+        setDialogOpen(true);
+      }, 500); // 长按500ms触发
+      setLongPressTimer(timer);
+    }
+  };
+
+  const handleTouchEnd = () => {
+    if (longPressTimer) {
+      clearTimeout(longPressTimer);
+      setLongPressTimer(null);
+    }
+  };
+
+  const handleClick = () => {
+    if (isTruncated) {
+      setDialogOpen(true);
+    }
+  };
+
+  return (
+    <>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          padding: "10px 14px",
+          backgroundColor: "var(--gray-a2)",
+          borderRadius: "8px",
+          border: "1px solid var(--gray-a4)",
+          transition: "all 0.2s ease",
+          cursor: isTruncated ? "pointer" : "default",
+          position: "relative",
+        }}
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+        onClick={handleClick}
+      >
+        <Flex align="center" gap="2" className="min-w-0">
+          <div style={{ color: "var(--accent-9)", flexShrink: 0 }}>
+            {icon}
+          </div>
+          <Text size="1" color="gray">
+            {label}
+          </Text>
+        </Flex>
+        <Flex align="center" gap="1" style={{ maxWidth: "60%" }}>
+          <Text size="1" className="text-right truncate" style={{
+            fontWeight: "500"
+          }}>
+            {value}
+          </Text>
+          {isTruncated && (
+            <Info size={12} className="text-gray-400 flex-shrink-0" />
+          )}
+        </Flex>
       </div>
-      <Text size="1" color="gray">
-        {label}
-      </Text>
-    </Flex>
-    <Text size="1" className="text-right truncate" style={{ 
-      maxWidth: "50%", 
-      fontWeight: "500"
-    }}>
-      {value}
-    </Text>
-  </div>
-);
+
+      {/* 移动端信息对话框 */}
+      {isTruncated && (
+        <Dialog.Root open={dialogOpen} onOpenChange={setDialogOpen}>
+          <Dialog.Content style={{ maxWidth: "90vw" }}>
+            <Dialog.Title>
+              <Flex align="center" gap="2">
+                {icon}
+                {label}
+              </Flex>
+            </Dialog.Title>
+            <Dialog.Description size="2" mb="4">
+              <Text style={{
+                wordBreak: "break-all",
+                whiteSpace: "pre-wrap",
+                fontSize: "14px",
+                lineHeight: "1.5"
+              }}>
+                {value}
+              </Text>
+            </Dialog.Description>
+            <Flex gap="3" mt="4" justify="end">
+              <Dialog.Close>
+                <Button variant="soft">关闭</Button>
+              </Dialog.Close>
+            </Flex>
+          </Dialog.Content>
+        </Dialog.Root>
+      )}
+    </>
+  );
+};

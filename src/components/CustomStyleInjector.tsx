@@ -212,15 +212,25 @@ export const CustomStyleInjector = () => {
         button[role="switch"] {
           backdrop-filter: none !important;
           -webkit-backdrop-filter: none !important;
+          border-radius: 9999px !important;
+          border: 1px solid transparent !important;
         }
 
         /* 开关按钮状态颜色 */
         button[role="switch"][aria-checked="true"] {
           background-color: var(--accent-9) !important;
+          border-color: var(--accent-10) !important;
         }
 
         button[role="switch"][aria-checked="false"] {
           background-color: var(--gray-5) !important;
+          border-color: var(--gray-6) !important;
+        }
+
+        /* 开关按钮内部圆点 */
+        button[role="switch"] > span {
+          border-radius: 9999px !important;
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2) !important;
         }
 
         /* Popover 弹出层保持不透明背景 */
@@ -239,6 +249,20 @@ export const CustomStyleInjector = () => {
         /* Popover 内的次要文字 */
         .rt-PopoverContent .rt-Text[size="2"] {
           color: var(--gray-11) !important;
+        }
+
+        /* Tooltip 弹出层保持不透明背景 - 修复颜色颠倒问题 */
+        .rt-TooltipContent {
+          background-color: var(--color-panel-solid) !important;
+          backdrop-filter: none !important;
+          -webkit-backdrop-filter: none !important;
+          border: 1px solid var(--gray-a6) !important;
+        }
+
+        /* Tooltip 内的文字使用 Radix UI 颜色 */
+        .rt-TooltipContent,
+        .rt-TooltipContent * {
+          color: var(--gray-12) !important;
         }
 
         /* 移除文字阴影 */

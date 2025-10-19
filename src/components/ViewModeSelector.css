@@ -5,6 +5,7 @@
 .view-mode-trigger {
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 8px;
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   transition: all 0.2s ease;
@@ -170,6 +171,25 @@
   
   .view-mode-item {
     padding: 0.75rem 1rem;
+  }
+}
+
+/* ==================== ANDROID CHROME 特殊修复 ==================== */
+/* 安卓Chrome在处理backdrop-filter + border-radius时存在渲染问题 */
+@supports (-webkit-backdrop-filter: blur(1px)) {
+  @media (max-width: 768px) {
+    /* 检测移动端 */
+    .view-mode-trigger {
+      /* 在移动端减弱blur效果,改善边框圆角显示 */
+      backdrop-filter: blur(4px) !important;
+      -webkit-backdrop-filter: blur(4px) !important;
+      /* 添加更强的边框以增强圆角可见性 */
+      border-width: 1.5px !important;
+      /* 确保圆角正确渲染 */
+      transform: translateZ(0);
+      -webkit-transform: translateZ(0);
+      will-change: transform;
+    }
   }
 }
 
