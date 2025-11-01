@@ -45,6 +45,7 @@ export const LiveDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       ws.onopen = () => {
         // 连接成功时，隐藏 Callout
         setShowCallout(true);
+        ws?.send("get");
       };
       ws.onmessage = (event) => {
         try {
