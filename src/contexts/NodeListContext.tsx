@@ -1,4 +1,5 @@
 import React from "react";
+import { useRPC2Call } from "./RPC2Context";
 
 export type NodeBasicInfo = {
   /** 节点唯一标识符 */
@@ -70,27 +71,76 @@ export const NodeListProvider: React.FC<{ children: React.ReactNode }> = ({
   const [nodeList, setNodeList] = React.useState<NodeBasicInfo[] | null>(null);
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const [error, setError] = React.useState<string | null>(null);
+  const { call } = useRPC2Call();
 
   const refresh = () => {
     setIsLoading(true);
     setError(null);
-    fetch("/api/nodes")
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Failed to fetch node data");
+
+    const fallbackFetch = () =>
+      fetch("/api/nodes")
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Failed to fetch node data");
+          }
+          return response.json();
+        })
+        .then((resp) => {
+          if (resp && Array.isArray(resp.data)) {
+            setNodeList(resp.data);
+          } else {
+            setNodeList([]);
+          }
+        });
+
+    // 先尝试 RPC2，失败时回退 REST
+    call<{ uuid?: string }, Record<string, any>>("common:getNodes")
+      .then((result) => {
+        if (!result || typeof result !== "object") {
+          setNodeList([]);
+          return;
         }
-        return response.json();
+        const list: NodeBasicInfo[] = Object.values(result).map((n: any) => ({
+          uuid: n.uuid,
+          name: n.name,
+          cpu_name: n.cpu_name,
+          virtualization: n.virtualization,
+          arch: n.arch,
+          cpu_cores: n.cpu_cores,
+          os: n.os,
+          kernel_version: n.kernel_version,
+          gpu_name: n.gpu_name,
+          region: n.region,
+          mem_total: n.mem_total,
+          swap_total: n.swap_total,
+          disk_total: n.disk_total,
+          version: n.version ?? "",
+          weight: n.weight ?? 0,
+          price: n.price ?? 0,
+          tags: n.tags ?? "",
+          billing_cycle: n.billing_cycle ?? 0,
+          currency: n.currency ?? "",
+          group: n.group ?? "",
+          traffic_limit: n.traffic_limit ?? 0,
+          traffic_limit_type: n.traffic_limit_type,
+          expired_at: n.expired_at ?? "",
+          created_at: n.created_at ?? "",
+          updated_at: n.updated_at ?? "",
+        }));
+        setNodeList(list);
       })
-      .then((resp) => {
-        if (resp && Array.isArray(resp.data)) {
-          console.log(resp.data);
-          setNodeList(resp.data);
-        } else {
+      .catch(async (err: any) => {
+        console.warn("RPC2 获取节点列表失败，回退 REST:", err?.message || err);
+        try {
+          await fallbackFetch();
+        } catch (restErr: any) {
+          setError(
+            restErr?.message ||
+              err?.message ||
+              "An error occurred while fetching data"
+          );
           setNodeList([]);
         }
-      })
-      .catch((err) => {
-        setError(err.message || "An error occurred while fetching data");
       })
       .finally(() => {
         setIsLoading(false);
