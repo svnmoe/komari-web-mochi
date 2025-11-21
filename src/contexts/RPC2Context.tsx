@@ -65,6 +65,15 @@ export const RPC2Provider: React.FC<{ children: React.ReactNode }> = ({
     };
   }, [client]);
 
+  // 页面加载即尝试建立 RPC2 WS，减少首次调用等待
+  useEffect(() => {
+    if (client.state === "disconnected") {
+      client.connect().catch(() => {
+        // 连接失败时静默，后续调用仍会按回退逻辑处理
+      });
+    }
+  }, [client]);
+
   const connect = async () => {
     try {
       setError(null);
