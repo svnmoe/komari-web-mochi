@@ -30,6 +30,7 @@ export class RPC2Client {
   private reconnectTimeout?: number | ReturnType<typeof setTimeout>;
   private heartbeatInterval?: number | ReturnType<typeof setInterval>;
   private eventListeners: RPC2EventListeners = {};
+  private connectPromise: Promise<void> | null = null;
 
   private readonly baseUrl: string;
   private readonly options: Required<RPC2ConnectionOptions>;
@@ -81,7 +82,7 @@ export class RPC2Client {
       this.ws = ws;
       this.setupWebSocketHandlers();
 
-      await new Promise<void>((resolve, reject) => {
+      this.connectPromise = new Promise<void>((resolve, reject) => {
         const handleOpen = () => {
           cleanup();
           resolve();
@@ -104,10 +105,14 @@ export class RPC2Client {
         ws.addEventListener("open", handleOpen, { once: true });
         ws.addEventListener("error", handleError, { once: true });
       });
+
+      await this.connectPromise;
     } catch (error) {
       this.setConnectionState(RPC2ConnectionState.ERROR);
       this.eventListeners.onError?.(error as Error);
       throw error;
+    } finally {
+      this.connectPromise = null;
     }
   }
 
@@ -267,17 +272,17 @@ export class RPC2Client {
     params?: TParams,
     options: RPC2CallOptions = {}
   ): Promise<TResult> {
-    // 1) 尝试确保或建立 WS 连接
+    // 1) 尝试确保或建立 WS 连接；如果正在连接则等待
     const tryWebSocket = async () => {
       if (this.connectionState === RPC2ConnectionState.CONNECTED) {
         return;
       }
+      if (this.connectionState === RPC2ConnectionState.CONNECTING && this.connectPromise) {
+        await this.connectPromise;
+        return;
+      }
       if (this.options.autoConnect) {
-        try {
-          await this.connect();
-        } catch (err) {
-          throw err;
-        }
+        await this.connect();
       } else {
         throw new Error("WebSocket 未连接");
       }
