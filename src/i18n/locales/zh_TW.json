@@ -1,6 +1,6 @@
 {
   "warn_https": "當前連接不是 HTTPS！您的敏感數據存在嚴重風險。請立即採取措施確保連接安全！複製操作可能無法使用！",
-  "warn_websocket": "RPC2 介面未連線，已切換備用通道，資料可能有延遲。",
+  "warn_websocket": "RPC2 介面未連線",
   "delete": "刪除",
   "account": {
     "title": "帳戶",
