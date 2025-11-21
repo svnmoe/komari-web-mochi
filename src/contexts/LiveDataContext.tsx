@@ -1,5 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import type { LiveDataResponse } from "../types/LiveData";
+import { useRPC2Call } from "./RPC2Context";
+import { LiveDataBridge } from "../lib/liveDataBridge";
 
 // 创建Context
 interface LiveDataContextType {
@@ -19,6 +21,7 @@ export const LiveDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [live_data, setLiveData] = useState<LiveDataResponse | null>(null);
   const [showCallout, setShowCallout] = useState(false);
   const [refreshCallbacks] = useState<Set<(data: LiveDataResponse) => void>>(new Set());
+  const { call } = useRPC2Call();
 
   // 注册刷新回调函数
   const onRefresh = (callback: (data: LiveDataResponse) => void) => {
@@ -30,57 +33,25 @@ export const LiveDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     refreshCallbacks.forEach(callback => callback(data));
   };
 
-  // WebSocket connection effect
+  // 优先 RPC2，失败回退 WS 的数据桥
   useEffect(() => {
-    let ws: WebSocket | null = null;
-    let reconnectTimeout: number;
-
-    const connect = () => {
-      ws = new WebSocket(
-        window.location.protocol.replace("http", "ws") +
-        "//" +
-        window.location.host +
-        "/api/clients"
-      );
-      ws.onopen = () => {
-        // 连接成功时，隐藏 Callout
-        setShowCallout(true);
-        ws?.send("get");
-      };
-      ws.onmessage = (event) => {
-        try {
-          const data = JSON.parse(event.data);
-          setLiveData(data);
-          // 当收到新数据时，通知所有已注册的回调函数
-          notifyRefreshCallbacks(data);
-        } catch (e) {
-          console.error(e);
-        }
-      };
-      ws.onerror = () => {
-        ws?.close();
-      };
-      ws.onclose = () => {
-        // 断开连接时，显示 Callout
-        setShowCallout(false);
-        reconnectTimeout = window.setTimeout(connect, 2000);
-      };
-    };
-
-    connect();
-
-    const interval = window.setInterval(() => {
-      if (ws && ws.readyState === WebSocket.OPEN) {
-        ws.send("get");
+    const bridge = new LiveDataBridge(
+      call,
+      (live) => {
+        setLiveData(live);
+        notifyRefreshCallbacks(live);
+      },
+      (connected) => {
+        setShowCallout(connected);
       }
-    }, 2000);
+    );
+
+    bridge.start();
 
     return () => {
-      clearInterval(interval);
-      clearTimeout(reconnectTimeout);
-      ws?.close();
+      bridge.stop();
     };
-  }, []);
+  }, [call]);
 
   return (
     <LiveDataContext.Provider value={{ live_data, showCallout, onRefresh }}>
