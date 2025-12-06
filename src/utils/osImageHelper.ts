@@ -59,7 +59,7 @@ const osConfigs: OSConfig[] = [
   {
     name: 'OpenWrt',
     image: '/assets/os-openwrt.svg',
-    keywords: ['openwrt', 'open wrt', 'open-wrt', 'qwrt']
+    keywords: ['openwrt', 'open wrt', 'open-wrt', 'qwrt','kwrt']
   },
   {
     name: 'ImmortalWrt',
