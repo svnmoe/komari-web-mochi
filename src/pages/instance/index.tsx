@@ -4,7 +4,7 @@ import { useLiveData } from "../../contexts/LiveDataContext";
 import { useTranslation } from "react-i18next";
 import type { Record } from "../../types/LiveData";
 import Flag from "../../components/Flag";
-import { Flex, SegmentedControl, Text } from "@radix-ui/themes";
+import { SegmentedControl } from "@radix-ui/themes";
 import { useNodeList } from "@/contexts/NodeListContext";
 import { liveDataToRecords } from "@/utils/RecordHelper";
 import EnhancedLoadChart from "./EnhancedLoadChart";
@@ -13,6 +13,9 @@ import { MobileDetailsCard } from "@/components/MobileDetailsCard";
 import { MobileLoadChart } from "@/components/MobileLoadChart";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { DesktopDetailsCard } from "@/components/DesktopDetailsCard";
+import { getOSImage } from "@/utils";
+import { formatUptime } from "@/components/Node";
+import "./instance-detail.css";
 
 export default function InstancePage() {
   const { t } = useTranslation();
@@ -27,6 +30,13 @@ export default function InstancePage() {
   const node = nodeList?.find((n) => n.uuid === uuid);
   const isOnline = live_data?.data?.online?.includes(uuid || "") || false;
   const liveNodeData = uuid ? live_data?.data?.data?.[uuid] : undefined;
+  const nodeName = node?.name ?? uuid ?? "";
+  const nodeUuid = node?.uuid ?? uuid ?? "";
+  const osIcon = getOSImage(node?.os ?? "");
+  const uptimeLabel = liveNodeData?.uptime ? formatUptime(liveNodeData.uptime, t) : "-";
+  const updatedLabel = liveNodeData?.updated_at ? new Date(liveNodeData.updated_at).toLocaleString() : "-";
+  const versionLabel = node?.version || "-";
+  const statusText = isOnline ? t("nodeCard.online") : t("nodeCard.offline");
 
   useEffect(() => {
     fetch(`/api/recent/${uuid}`)
@@ -64,128 +74,141 @@ export default function InstancePage() {
   // #region 布局
   if (isMobile && node) {
     return (
-      <Flex className="items-center" direction={"column"} gap="2" style={{ width: "100%" }}>
-        {/* 移动端标题栏 */}
-        <div className="w-full px-3 py-2" style={{ backgroundColor: "var(--accent-2)", borderRadius: "12px", margin: "0 12px" }}>
-          <Flex align="center" gap="2" className="mb-2">
-            <Flag flag={node?.region ?? ""} />
-            <Text size="3" weight="bold" className="truncate flex-1">
-              {node?.name ?? uuid}
-            </Text>
-          </Flex>
-          <Text size="1" color="gray" className="px-2">
-            {node?.uuid}
-          </Text>
-        </div>
+      <div className="node-detail-shell">
+        <div className="node-detail-container">
+          <div className="node-detail-hero node-detail-animate" style={{ ["--delay" as any]: "0ms" }}>
+            <div className="node-detail-hero-top">
+              <div className="node-detail-title">
+                <Flag flag={node?.region ?? ""} />
+                <img className="node-detail-os-icon" src={osIcon} alt={node?.os ?? "OS"} />
+                <div className="node-detail-title-text">
+                  <div className="node-detail-name-row">
+                    <span className="node-detail-name">{nodeName}</span>
+                    <span className="node-detail-mono node-detail-uuid-pill">{nodeUuid}</span>
+                  </div>
+                </div>
+              </div>
+              <div className={`node-detail-status ${isOnline ? "online" : "offline"}`}>
+                {statusText}
+              </div>
+            </div>
+            <div className="node-detail-hero-info">
+              <div className="node-detail-hero-item">
+                <span className="node-detail-hero-label">{t("nodeCard.version")}</span>
+                <span className="node-detail-hero-value">{versionLabel}</span>
+              </div>
+              <div className="node-detail-hero-item">
+                <span className="node-detail-hero-label">{t("nodeCard.uptime")}</span>
+                <span className="node-detail-hero-value">{uptimeLabel}</span>
+              </div>
+              <div className="node-detail-hero-item">
+                <span className="node-detail-hero-label">{t("nodeCard.last_updated")}</span>
+                <span className="node-detail-hero-value">{updatedLabel}</span>
+              </div>
+            </div>
+          </div>
 
-        {/* 移动端详情卡片 */}
-        <MobileDetailsCard 
-          node={node} 
-          liveData={liveNodeData} 
-          isOnline={isOnline}
-        />
+          <MobileDetailsCard node={node} liveData={liveNodeData} />
 
-        {/* 图表切换 */}
-        <div className="w-full px-3 mb-3">
-          <SegmentedControl.Root
-            radius="full"
-            value={chartView}
-            onValueChange={(value) => setChartView(value as "load" | "ping")}
-            className="w-full"
-          >
-            <SegmentedControl.Item 
-              value="load" 
-              className="flex-1"
-            >
-              {t("nodeCard.load")}
-            </SegmentedControl.Item>
-            <SegmentedControl.Item 
-              value="ping" 
-              className="flex-1"
-            >
-              {t("nodeCard.ping")}
-            </SegmentedControl.Item>
-          </SegmentedControl.Root>
+          <div className="node-detail-chart-card node-detail-animate" style={{ ["--delay" as any]: "200ms" }}>
+            <div className="node-detail-chart-header">
+              <div className="node-detail-section-title">{t("nodeCard.chart")}</div>
+              <SegmentedControl.Root
+                radius="full"
+                value={chartView}
+                onValueChange={(value) => setChartView(value as "load" | "ping")}
+                className="node-detail-toggle"
+              >
+                <SegmentedControl.Item value="load">
+                  {t("nodeCard.load")}
+                </SegmentedControl.Item>
+                <SegmentedControl.Item value="ping">
+                  {t("nodeCard.ping")}
+                </SegmentedControl.Item>
+              </SegmentedControl.Root>
+            </div>
+            <div className="node-detail-chart-body">
+              {chartView === "load" ? (
+                <MobileLoadChart
+                  data={liveDataToRecords(uuid ?? "", recent)}
+                  liveData={liveNodeData}
+                  node={node}
+                  uuid={uuid}
+                />
+              ) : (
+                <PingChartV2 uuid={uuid ?? ""} />
+              )}
+            </div>
+          </div>
         </div>
-
-        {/* 图表 */}
-        <div className="w-full px-3 pb-4">
-          {chartView === "load" ? (
-            <MobileLoadChart 
-              data={liveDataToRecords(uuid ?? "", recent)} 
-              liveData={liveNodeData}
-              node={node}
-              uuid={uuid}
-            />
-          ) : (
-            <PingChartV2 uuid={uuid ?? ""} />
-          )}
-        </div>
-      </Flex>
+      </div>
     );
   }
 
-  // 桌面端布局
   return (
-    <Flex className="items-center" direction={"column"} gap="4" style={{ padding: "0 20px" }}>
-      {/* 标题区域 */}
-      <div className="w-full max-w-7xl">
-        <div className="flex flex-col gap-2 md:p-4 p-3 border-0 rounded-lg" style={{ backgroundColor: "var(--accent-2)" }}>
-          <h1 className="flex items-center flex-wrap gap-2">
-            <Flag flag={node?.region ?? ""} />
-            <Text size="4" weight="bold" wrap="nowrap">
-              {node?.name ?? uuid}
-            </Text>
-            <Text
+    <div className="node-detail-shell">
+      <div className="node-detail-container">
+        <div className="node-detail-hero node-detail-animate" style={{ ["--delay" as any]: "0ms" }}>
+          <div className="node-detail-hero-top">
+            <div className="node-detail-title">
+              <Flag flag={node?.region ?? ""} />
+              <img className="node-detail-os-icon" src={osIcon} alt={node?.os ?? "OS"} />
+              <div className="node-detail-title-text">
+                <div className="node-detail-name-row">
+                  <span className="node-detail-name">{nodeName}</span>
+                  <span className="node-detail-mono node-detail-uuid-pill">{nodeUuid}</span>
+                </div>
+              </div>
+            </div>
+            <div className={`node-detail-status ${isOnline ? "online" : "offline"}`}>
+              {statusText}
+            </div>
+          </div>
+          <div className="node-detail-hero-info">
+            <div className="node-detail-hero-item">
+              <span className="node-detail-hero-label">{t("nodeCard.version")}</span>
+              <span className="node-detail-hero-value">{versionLabel}</span>
+            </div>
+            <div className="node-detail-hero-item">
+              <span className="node-detail-hero-label">{t("nodeCard.uptime")}</span>
+              <span className="node-detail-hero-value">{uptimeLabel}</span>
+            </div>
+            <div className="node-detail-hero-item">
+              <span className="node-detail-hero-label">{t("nodeCard.last_updated")}</span>
+              <span className="node-detail-hero-value">{updatedLabel}</span>
+            </div>
+          </div>
+        </div>
+
+        {node && <DesktopDetailsCard node={node} liveData={liveNodeData} />}
+
+        <div className="node-detail-chart-card node-detail-animate" style={{ ["--delay" as any]: "320ms" }}>
+          <div className="node-detail-chart-header">
+            <div className="node-detail-section-title">{t("nodeCard.chart")}</div>
+            <SegmentedControl.Root
+              radius="full"
+              value={chartView}
+              onValueChange={(value) => setChartView(value as "load" | "ping")}
               size="2"
-              style={{
-                marginLeft: "8px",
-              }}
-              className="text-accent-6"
-              wrap="nowrap"
+              className="node-detail-toggle"
             >
-              {node?.uuid}
-            </Text>
-          </h1>
+              <SegmentedControl.Item value="load">
+                {t("nodeCard.load")}
+              </SegmentedControl.Item>
+              <SegmentedControl.Item value="ping">
+                {t("nodeCard.ping")}
+              </SegmentedControl.Item>
+            </SegmentedControl.Root>
+          </div>
+          <div className="node-detail-chart-body">
+            {chartView === "load" ? (
+              <EnhancedLoadChart data={liveDataToRecords(uuid ?? "", recent)} />
+            ) : (
+              <PingChartV2 uuid={uuid ?? ""} />
+            )}
+          </div>
         </div>
       </div>
-
-      {/* 详情卡片 */}
-      {node && (
-        <DesktopDetailsCard 
-          node={node}
-          liveData={liveNodeData}
-          isOnline={isOnline}
-          uuid={uuid ?? ""}
-        />
-      )}
-
-      {/* 图表切换 */}
-      <SegmentedControl.Root
-        radius="full"
-        value={chartView}
-        onValueChange={(value) => setChartView(value as "load" | "ping")}
-        size="2"
-      >
-        <SegmentedControl.Item value="load">
-          {t("nodeCard.load")}
-        </SegmentedControl.Item>
-        <SegmentedControl.Item value="ping">
-          {t("nodeCard.ping")}
-        </SegmentedControl.Item>
-      </SegmentedControl.Root>
-
-      {/* 图表 */}
-      <div className="w-full max-w-7xl">
-        {chartView === "load" ? (
-          <EnhancedLoadChart data={liveDataToRecords(uuid ?? "", recent)} />
-        ) : (
-          <PingChartV2 uuid={uuid ?? ""} />
-        )}
-      </div>
-    </Flex>
+    </div>
   );
 }
-
-
-

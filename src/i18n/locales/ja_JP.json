@@ -374,6 +374,7 @@
   "Node Metrics Overview": "ノードメトリクス概要",
   "Show All": "すべて表示",
   "Hide All": "すべて非表示",
+  "Task Name": "タスク名",
   "Current": "現在",
   "Loss": "パケットロス",
   "Avg": "平均",
