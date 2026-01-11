@@ -21,7 +21,12 @@ export const LiveDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [live_data, setLiveData] = useState<LiveDataResponse | null>(null);
   const [showCallout, setShowCallout] = useState(false);
   const [refreshCallbacks] = useState<Set<(data: LiveDataResponse) => void>>(new Set());
-  const { call } = useRPC2Call();
+  const { call, isConnected } = useRPC2Call();
+
+  // 当 RPC2 连接状态变化时同步更新 callout，避免第一次成功后仍显示未连接提示
+  useEffect(() => {
+    setShowCallout(isConnected);
+  }, [isConnected]);
 
   // 注册刷新回调函数
   const onRefresh = (callback: (data: LiveDataResponse) => void) => {
