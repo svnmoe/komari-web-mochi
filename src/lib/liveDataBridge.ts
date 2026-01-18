@@ -52,6 +52,11 @@ export class LiveDataBridge {
   start() {
     this.mode = "rpc";
     this.rpcFailureCount = 0;
+    // 首次启动立即尝试获取一次 RPC 数据，避免必须等到下一个计时周期
+    this.fetchRpcLatest().catch((e) => {
+      // 错误在内部处理并会在后续调度中重试
+      console.debug("LiveDataBridge: initial fetchRpcLatest failed:", e);
+    });
     this.scheduleRpc();
   }
 
