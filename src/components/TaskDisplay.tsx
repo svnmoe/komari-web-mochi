@@ -252,7 +252,29 @@ const TaskDisplay: React.FC<TaskDisplayProps> = ({ nodes, liveData }) => {
   const [hiddenNodes, setHiddenNodes] = useState<Record<string, boolean>>({});
   const [chartType, setChartType] = useState<"line" | "area" | "composed">("line");
   const [connectNulls, setConnectNulls] = useState(true);
-  
+
+  // 稳定节点列表：使用节点 UUID 列表作为依赖，避免数组引用变化触发数据重新获取
+  const nodesKey = useMemo(() =>
+    (nodes || []).map(n => n.uuid).sort().join(','),
+    [nodes]
+  );
+
+  // 稳定在线节点列表：避免 liveData 引用变化导致不必要的重渲染
+  const onlineNodesKey = useMemo(() =>
+    (liveData?.online || []).slice().sort().join(','),
+    [liveData?.online]
+  );
+
+  // 创建稳定的在线状态 Map
+  const onlineStatusMap = useMemo(() => {
+    const map: Record<string, boolean> = {};
+    const onlineSet = new Set(liveData?.online || []);
+    nodes?.forEach(node => {
+      map[node.uuid] = onlineSet.has(node.uuid);
+    });
+    return map;
+  }, [onlineNodesKey, nodes]);
+
   // Time range selection
   const presetViews = taskMode === "ping" 
     ? [
@@ -392,7 +414,7 @@ const TaskDisplay: React.FC<TaskDisplayProps> = ({ nodes, liveData }) => {
             setLoading(false);
           });
       });
-  }, [taskMode, nodes?.length]);
+  }, [taskMode, nodesKey]);
 
   // Fetch ping data
   useEffect(() => {
@@ -498,7 +520,7 @@ const TaskDisplay: React.FC<TaskDisplayProps> = ({ nodes, liveData }) => {
             setLoading(false);
           });
       });
-  }, [taskMode, selectedTaskId, nodes, viewHours]);
+  }, [taskMode, selectedTaskId, nodesKey, viewHours]);
 
   // Fetch load data
   useEffect(() => {
@@ -532,7 +554,7 @@ const TaskDisplay: React.FC<TaskDisplayProps> = ({ nodes, liveData }) => {
         console.error("Error fetching load data:", err);
         setLoading(false);
       });
-  }, [taskMode, nodes, viewHours, selectedMetrics]);
+  }, [taskMode, nodesKey, viewHours, selectedMetrics]);
 
   // Process chart data
   const chartData = useMemo(() => {
@@ -732,13 +754,12 @@ const TaskDisplay: React.FC<TaskDisplayProps> = ({ nodes, liveData }) => {
           // Use server stats if available, otherwise calculate from data
           const min = serverStats?.min !== undefined ? serverStats.min : Math.min(...values);
           const max = serverStats?.max !== undefined ? serverStats.max : Math.max(...values);
-          const lossRate = serverStats?.loss !== undefined 
+          const lossRate = serverStats?.loss !== undefined
             ? Math.round(serverStats.loss * 10) / 10
-            : typeof backendLossRate === 'number' 
+            : typeof backendLossRate === 'number'
               ? Math.round(backendLossRate * 10) / 10
               : Math.round((1 - values.length / chartData.length) * 1000) / 10;
-          
-          const isOnline = liveData?.online?.includes(node.uuid) || false;
+
           stats[node.uuid] = {
             min,
             max,
@@ -747,15 +768,13 @@ const TaskDisplay: React.FC<TaskDisplayProps> = ({ nodes, liveData }) => {
             lossRate,
             totalSamples: chartData.length,
             validSamples: values.length,
-            isOnline,
             isBackendCalculated: serverStats?.loss !== undefined || typeof backendLossRate === 'number',
             hasServerStats: !!serverStats,
           };
         } else if (serverPingStats[node.uuid]) {
           // Even if no chart data, use server stats if available
           const serverStats = serverPingStats[node.uuid];
-          const isOnline = liveData?.online?.includes(node.uuid) || false;
-          
+
           stats[node.uuid] = {
             min: serverStats.min || 0,
             max: serverStats.max || 0,
@@ -764,7 +783,6 @@ const TaskDisplay: React.FC<TaskDisplayProps> = ({ nodes, liveData }) => {
             lossRate: Math.round((serverStats.loss || 0) * 10) / 10,
             totalSamples: 0,
             validSamples: 0,
-            isOnline,
             isBackendCalculated: true,
             hasServerStats: true,
           };
@@ -774,7 +792,6 @@ const TaskDisplay: React.FC<TaskDisplayProps> = ({ nodes, liveData }) => {
       // Load mode statistics
       nodes.forEach(node => {
         const nodeStats: any = {
-          isOnline: liveData?.online?.includes(node.uuid) || false,
           metrics: {}
         };
         
@@ -806,7 +823,7 @@ const TaskDisplay: React.FC<TaskDisplayProps> = ({ nodes, liveData }) => {
     }
     
     return stats;
-  }, [chartData, nodes, liveData, taskMode, selectedTaskId, taskLossRates, selectedMetrics, serverPingStats]);
+  }, [chartData, nodes, taskMode, selectedTaskId, taskLossRates, selectedMetrics, serverPingStats]);
 
   const toggleNode = useCallback((nodeId: string) => {
     setHiddenNodes(prev => ({ ...prev, [nodeId]: !prev[nodeId] }));
@@ -1411,7 +1428,7 @@ const TaskDisplay: React.FC<TaskDisplayProps> = ({ nodes, liveData }) => {
                   const stats = nodeStatistics[node.uuid];
                   const isHidden = hiddenNodes[node.uuid];
                   const colorScheme = getNodeColorScheme(node.uuid);
-                  const isOnline = stats?.isOnline || false;
+                  const isOnline = onlineStatusMap[node.uuid] || false;
                   
                   return (
                     <motion.div
