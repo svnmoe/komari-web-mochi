@@ -47,6 +47,11 @@ Thumbs.db
 coverage/
 *.lcov
 
+# Bun
+bun.lockb
+.bun-cache/
+.bun/
+
 # Yarn
 .yarn/*
 !.yarn/patches

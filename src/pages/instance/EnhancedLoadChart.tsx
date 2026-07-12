@@ -351,7 +351,7 @@ const EnhancedLoadChart = ({ data = [] }: EnhancedLoadChartProps) => {
     <div className="desktop-chart-wrapper">
       {/* 时间周期选择器 */}
       {availableView.length > 1 && (
-        <div className="w-full px-3 md:px-0 mb-2">
+        <div className="w-full mb-2">
           <div 
             className="w-full overflow-x-auto md:overflow-x-visible pb-2 md:pb-0"
             style={{
@@ -361,15 +361,13 @@ const EnhancedLoadChart = ({ data = [] }: EnhancedLoadChartProps) => {
               maxWidth: "100%",
             }}
           >
-            <Flex justify="center" className="w-full min-w-max md:min-w-0">
+            <Flex justify="start" className="w-full min-w-max md:min-w-0">
               <SegmentedControl.Root
-                radius="full"
+                radius="small"
                 value={hoursView}
                 onValueChange={setHoursView}
-                className="flex-shrink-0"
+                className="node-detail-toggle flex-shrink-0"
                 style={{ 
-                  transform: "scale(0.95)",
-                  transformOrigin: "center",
                   height: "38px",
                   minWidth: "fit-content"
                 }}

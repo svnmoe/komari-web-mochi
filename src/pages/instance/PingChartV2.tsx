@@ -369,6 +369,7 @@ const PingChart = ({ uuid }: { uuid: string }) => {
                 setHours(selected.hours);
               }
             }}
+            className="node-detail-toggle"
           >
             {avaliableView.map((v) => (
               <SegmentedControl.Item
