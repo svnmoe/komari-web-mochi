@@ -246,6 +246,29 @@ export const CustomStyleInjector = () => {
           color: var(--gray-11) !important;
         }
 
+        /* 下拉菜单（DropdownMenu）磨砂玻璃背景 - 与 dashboard 卡片同款 */
+        /* 菜单内容被 Radix portal 到 body 且自带 .radix-themes 类，
+           会被上面 .radix-themes { background: transparent } 强制透明，
+           这里用更高优先级选择器覆盖为与卡片一致的磨砂效果 */
+        .radix-themes.rt-DropdownMenuContent {
+          background-color: rgba(255, 255, 255, var(--custom-light-opacity)) !important;
+          backdrop-filter: blur(var(--custom-blur-strength));
+          -webkit-backdrop-filter: blur(var(--custom-blur-strength));
+          box-shadow: 0 0 var(--custom-glow-strength) rgba(0, 0, 0, 0.15);
+        }
+
+        /* 暗色模式：dark 类加在菜单元素自身上，需用同类选择器命中 */
+        .radix-themes.dark.rt-DropdownMenuContent {
+          background-color: rgba(30, 30, 30, var(--custom-dark-opacity)) !important;
+          box-shadow: 0 0 var(--custom-glow-strength) rgba(0, 0, 0, 0.3);
+        }
+
+        /* 下拉菜单内的文字使用 Radix UI 颜色，保证磨砂背景上可读 */
+        .radix-themes.rt-DropdownMenuContent,
+        .radix-themes.rt-DropdownMenuContent * {
+          color: var(--gray-12) !important;
+        }
+
         /* Tooltip 弹出层保持不透明背景 - 修复颜色颠倒问题 */
         .rt-TooltipContent {
           background-color: var(--color-panel-solid) !important;
