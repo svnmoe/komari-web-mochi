@@ -139,7 +139,19 @@
     @apply border-border outline-ring/50;
     box-sizing: border-box;
   }
-  html,
+  /*
+   * 注意：不要给 html 设置 overflow-x: hidden。
+   * 一旦 html 的 overflow 不为 visible，html 就会成为滚动容器（滚动条挂在 viewport 上），
+   * 而 Radix 弹层（DropdownMenu/Dialog 等）展开时的滚动锁定（react-remove-scroll-bar）
+   * 假设滚动条由 body 控制：它会给 body 设置 overflow:hidden 并附加
+   * margin-right: <滚动条宽度> 作为补偿。若滚动条实际在 html 上并未消失，
+   * 该补偿就会把页面向左挤压、右侧多出一条空白。
+   * 因此只在 body / #root 上裁剪横向溢出（body 的 overflow 会传播到 viewport），
+   * 由 body 控制滚动条，Radix 的补偿才能精确生效，弹层展开时页面不再偏移。
+   */
+  html {
+    max-width: 100%;
+  }
   body,
   #root {
     max-width: 100%;
@@ -148,6 +160,22 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/*
+ * 覆盖 react-remove-scroll-bar 的滚动锁定。
+ * Radix 弹层（DropdownMenu 等）展开时，react-remove-scroll-bar 会注入：
+ *   body[data-scroll-locked] { overflow: hidden !important; margin-right: Npx !important; }
+ * 这会导致页面滚动条消失。对于下拉菜单这类轻量弹层，背景滚动并无害处
+ * （Radix 会在页面滚动时自动关闭菜单），因此这里用更高优先级选择器
+ * 恢复 body 的 overflow-y: auto，让页面滚动条始终保持原样、不受菜单展开影响。
+ * 选择器 html body[data-scroll-locked]（特异性 0-1-2）> body[data-scroll-locked]（0-1-1），
+ * 双方均 !important 时高特异性胜出，无需依赖源码顺序。
+ */
+html body[data-scroll-locked] {
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  margin-right: 0 !important;
 }
 
 .home-dashboard-shell {
