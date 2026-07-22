@@ -162,6 +162,22 @@
   }
 }
 
+/*
+ * 覆盖 react-remove-scroll-bar 的滚动锁定。
+ * Radix 弹层（DropdownMenu 等）展开时，react-remove-scroll-bar 会注入：
+ *   body[data-scroll-locked] { overflow: hidden !important; margin-right: Npx !important; }
+ * 这会导致页面滚动条消失。对于下拉菜单这类轻量弹层，背景滚动并无害处
+ * （Radix 会在页面滚动时自动关闭菜单），因此这里用更高优先级选择器
+ * 恢复 body 的 overflow-y: auto，让页面滚动条始终保持原样、不受菜单展开影响。
+ * 选择器 html body[data-scroll-locked]（特异性 0-1-2）> body[data-scroll-locked]（0-1-1），
+ * 双方均 !important 时高特异性胜出，无需依赖源码顺序。
+ */
+html body[data-scroll-locked] {
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  margin-right: 0 !important;
+}
+
 .home-dashboard-shell {
   width: 100%;
   min-width: 0;
