@@ -93,4 +93,4 @@ SOFTWARE.
 ```
 ## Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=svnmoe/komari-web-mochi&type=Date)](https://www.star-history.com/#svnmoe/komari-web-mochi&Date)
+[![Star History Chart](https://star-history.dera.page/svg?repos=svnmoe/komari-web-mochi&type=Date)](https://star-history.dera.page/#svnmoe/komari-web-mochi&Date)
